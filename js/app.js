@@ -22,9 +22,15 @@ const ICONS = {
   ivan: "🏃",
   zombie_vecino: "🧟",
   arana_comun: "🕷️",
+  zombie_arana: "🕷️",
   zombie_vacunado: "🧟‍♂️",
   zombie_recien: "🏃",
-  zombie_blandito: "🤢"
+  zombie_blandito: "🤢",
+  zombie_barrevereda: "🧹",
+  zombie_picado: "⚽",
+  zombie_arana_grande: "🕷️",
+  zombie_asador: "🥩",
+  zombie_delivery: "🛵"
 };
 
 const characterTemplates = [
@@ -108,8 +114,8 @@ const characterTemplates = [
     passives: [],
     abilities: {
       basic: { name: "Puno", kind: "damage", target: "enemy", range: 1, power: 10, chargeNeeded: 0 },
-      special: { name: "Tuca", kind: "heal_self", target: "self", range: 0, healPower: 28, chargeNeeded: 2 },
-      ultimate: { name: "Compra porro", kind: "heal_all", target: "allies", range: 99, healPower: 24, chargeNeeded: 4 }
+      special: { name: "Tuca", kind: "heal_self", target: "self", range: 0, healPower: 28, chargeNeeded: 2, smoking: true, smokingGula: 10 },
+      ultimate: { name: "Compra porro", kind: "heal_all", target: "allies", range: 99, healPower: 24, chargeNeeded: 4, smoking: true, smokingGula: 10 }
     }
   },
   {
@@ -120,7 +126,7 @@ const characterTemplates = [
     passives: [],
     abilities: {
       basic: { name: "Puno", kind: "damage", target: "enemy", range: 1, power: 9, chargeNeeded: 0 },
-      special: { name: "Criollitos", kind: "heal_all", target: "allies", range: 99, healPower: 20, chargeNeeded: 2 },
+      special: { name: "Criollitos", kind: "gula_reduce_all", target: "allies", range: 99, gulaReduce: 25, chargeNeeded: 2 },
       ultimate: { name: "Furia de la noche", kind: "lulo_fury", target: "enemies", range: 99, power: 22, chargeNeeded: 4 }
     }
   },
@@ -203,6 +209,71 @@ const enemyTemplates = [
       special: { name: "Ampolla", kind: "aoe_infect", target: "enemy", range: 4, power: 10, chargeNeeded: 2, infectChance: 0.65, infectTurns: 3 },
       ultimate: { name: "Escupitajo toxico", kind: "infect_damage", target: "enemy", range: 5, power: 11, chargeNeeded: 3, infectChance: 0.5, infectTurns: 3 }
     }
+  },
+  {
+    id: "zombie_delivery",
+    name: "Zombie Delivery",
+    role: "Movilidad",
+    ai: "cazador",
+    stats: { hp: 70, strength: 4, defense: 3, accuracy: 7, speed: 9 },
+    passives: [],
+    abilities: {
+      basic: { name: "Delivery", kind: "delivery_dash", target: "enemy", range: 1, power: 9, chargeNeeded: 0, dashCells: 1 },
+      special: { name: "Pedido equivocado", kind: "greasy_throw", target: "enemy", range: 4, power: 9, chargeNeeded: 2, duration: 1 },
+      ultimate: { name: "Reparto expres", kind: "damage", target: "enemy", range: 1, power: 18, chargeNeeded: 3 }
+    }
+  },
+  {
+    id: "zombie_barrevereda",
+    name: "Zombie Barre Vereda",
+    role: "Soporte / Zona",
+    ai: "hostigador",
+    stats: { hp: 55, strength: 3, defense: 3, accuracy: 8, speed: 5 },
+    passives: ["chusmerio_aura"],
+    abilities: {
+      basic: { name: "Escobazo", kind: "damage", target: "enemy", range: 1, power: 6, chargeNeeded: 0 },
+      special: { name: "Yo vi todo", kind: "buff_str_radius", target: "enemies", range: 3, chargeNeeded: 2, duration: 2, strBonus: 2 },
+      ultimate: { name: "Escobazo doble", kind: "damage", target: "enemy", range: 1, power: 14, chargeNeeded: 3 }
+    }
+  },
+  {
+    id: "zombie_picado",
+    name: "Zombie del Picado",
+    role: "Control",
+    ai: "agresivo",
+    stats: { hp: 80, strength: 6, defense: 4, accuracy: 7, speed: 8 },
+    passives: [],
+    abilities: {
+      basic: { name: "Patada", kind: "damage", target: "enemy", range: 1, power: 10, chargeNeeded: 0 },
+      special: { name: "Pelotazo", kind: "push_damage", target: "enemy", range: 4, power: 14, chargeNeeded: 2, pushCells: 1 },
+      ultimate: { name: "Falta", kind: "sweep_adjacent", target: "enemies", range: 1, power: 8, chargeNeeded: 3, duration: 1 }
+    }
+  },
+  {
+    id: "zombie_arana_grande",
+    name: "Zombie Arana",
+    role: "Invocador",
+    ai: "control",
+    stats: { hp: 75, strength: 4, defense: 4, accuracy: 7, speed: 6 },
+    passives: [],
+    abilities: {
+      basic: { name: "Aranazo", kind: "damage", target: "enemy", range: 1, power: 9, chargeNeeded: 0 },
+      special: { name: "Salgan", kind: "summon_spiders", target: "none", range: 0, chargeNeeded: 2, summonCount: 2, maxSpiders: 4 },
+      ultimate: { name: "Enjambre furioso", kind: "damage", target: "enemy", range: 1, power: 13, chargeNeeded: 3 }
+    }
+  },
+  {
+    id: "zombie_asador",
+    name: "Zombie Asador",
+    role: "Control de Gula",
+    ai: "tanque",
+    stats: { hp: 95, strength: 6, defense: 6, accuracy: 5, speed: 2 },
+    passives: ["olor_asado_aura"],
+    abilities: {
+      basic: { name: "Escobillazo", kind: "damage", target: "enemy", range: 1, power: 9, chargeNeeded: 0 },
+      special: { name: "Brasas", kind: "aoe_burn", target: "enemy", range: 4, power: 10, chargeNeeded: 2 },
+      ultimate: { name: "Explosion de brasas", kind: "aoe_all", target: "enemies", range: 99, power: 12, chargeNeeded: 4 }
+    }
   }
 ];
 
@@ -224,7 +295,11 @@ const els = {
   targetSelect: document.getElementById("targetSelect"),
   endTurnBtn: document.getElementById("endTurnBtn"),
   unitDetails: document.getElementById("unitDetails"),
-  log: document.getElementById("log")
+  log: document.getElementById("log"),
+  gulaList: document.getElementById("gulaList"),
+  houseResetBtn: document.getElementById("houseResetBtn"),
+  foodSelect: document.getElementById("foodSelect"),
+  eatBtn: document.getElementById("eatBtn")
 };
 
 const state = {
@@ -427,6 +502,7 @@ function createUnit(template, team, idx, teamSize, controller, templateGroup) {
     passives: [...template.passives],
     abilities: deepClone(template.abilities),
     charge: { special: 0, ultimate: 0 },
+    gula: 0,
     statuses: {
       skipTurn: 0,
       stunned: 0,
@@ -436,9 +512,35 @@ function createUnit(template, team, idx, teamSize, controller, templateGroup) {
       infectionTurns: 0,
       infectionDamage: 0,
       buffTurns: 0,
-      buff: { defensePct: 0, accuracyPct: 0, extraMove: 0 }
+      auraSpeed: 0,
+      auraAccuracy: 0,
+      buff: { defensePct: 0, accuracyPct: 0, extraMove: 0, strFlat: 0 }
     }
   };
+}
+
+function spawnUnitNear(template, nearUnit) {
+  if (!template) return null;
+  const candidates = [];
+
+  for (let radius = 1; radius <= 3 && !candidates.length; radius += 1) {
+    for (let dx = -radius; dx <= radius; dx += 1) {
+      for (let dy = -radius; dy <= radius; dy += 1) {
+        const cell = { x: nearUnit.pos.x + dx, y: nearUnit.pos.y + dy };
+        if (manhattan(cell, nearUnit.pos) === radius && isWalkable(cell, null)) {
+          candidates.push(cell);
+        }
+      }
+    }
+  }
+
+  if (!candidates.length) return null;
+  const pos = candidates[Math.floor(Math.random() * candidates.length)];
+  const unit = createUnit(template, nearUnit.team, state.units.length, 1, "ai", "enemy");
+  unit.uid = `${nearUnit.team}_${template.id}_spawn_${Math.floor(Math.random() * 99999)}`;
+  unit.pos = pos;
+  state.units.push(unit);
+  return unit;
 }
 
 function startBattle() {
@@ -470,6 +572,7 @@ function startBattle() {
     state.units.push(createUnit(tpl, "B", idx, TEAM_SIZE, "ai", "enemy"));
   });
 
+  recomputeAuras();
   recalculateTurnOrder();
   pushLog("Comienza el combate 4v4.", "ok");
   beginTurn();
@@ -514,20 +617,56 @@ function recalculateTurnOrder() {
 
 function effectiveSpeed(unit) {
   const slow = unit.statuses.movePenalty > 0 ? 1 : 0;
-  return Math.max(1, unit.stats.speed - slow);
+  return Math.max(1, unit.stats.speed + unit.statuses.auraSpeed - slow);
+}
+
+function effectiveMovementCells(unit) {
+  const base = movementFromSpeed(unit.stats.speed + unit.statuses.auraSpeed);
+  const penalty = unit.statuses.movePenalty > 0 ? 1 : 0;
+  const gulaPenalty = gulaMovePenalty(unit);
+  const extra = unit.statuses.buff.extraMove || 0;
+  return Math.max(1, base - penalty - gulaPenalty + extra);
 }
 
 function isSpiderAlive() {
   return state.units.some((u) => u.isAlive && u.templateId === "arana_comun");
 }
 
+function applyAsadorAura(unit) {
+  if (unit.controller !== "human") return;
+  const asadors = state.units.filter((u) => u.isAlive && u.templateId === "zombie_asador");
+  if (asadors.some((asador) => manhattan(asador.pos, unit.pos) <= 3)) {
+    pushLog(`${unit.name} siente olor a asado...`, "warn");
+    addGula(unit, 5);
+  }
+}
+
+function recomputeAuras() {
+  state.units.forEach((unit) => {
+    unit.statuses.auraSpeed = 0;
+    unit.statuses.auraAccuracy = 0;
+  });
+
+  state.units
+    .filter((unit) => unit.isAlive && unit.passives.includes("chusmerio_aura"))
+    .forEach((barre) => {
+      aliveUnits(barre.team).forEach((unit) => {
+        if (unit.uid !== barre.uid && manhattan(unit.pos, barre.pos) <= 3) {
+          unit.statuses.auraSpeed += 1;
+          unit.statuses.auraAccuracy += 1;
+        }
+      });
+    });
+}
+
 function processStatusTick(unit) {
+  applyAsadorAura(unit);
   if (unit.statuses.movePenalty > 0) unit.statuses.movePenalty -= 1;
 
   if (unit.statuses.buffTurns > 0) {
     unit.statuses.buffTurns -= 1;
     if (unit.statuses.buffTurns === 0) {
-      unit.statuses.buff = { defensePct: 0, accuracyPct: 0, extraMove: 0 };
+      unit.statuses.buff = { defensePct: 0, accuracyPct: 0, extraMove: 0, strFlat: 0 };
       pushLog(`${unit.name} pierde los buffs de Ivan.`, "warn");
     }
   }
@@ -580,6 +719,8 @@ function checkBattleEnd() {
 function beginTurn() {
   if (!state.battleStarted) return;
   if (checkBattleEnd()) return;
+
+  recomputeAuras();
 
   if (state.turnIndex >= state.turnOrder.length) {
     state.turnIndex = 0;
@@ -679,21 +820,22 @@ function renderActions() {
 
   const canMove = !state.movedThisTurn;
   playerMoveBtn.classList.toggle("on", canMove);
-  playerMoveBtn.disabled = true;
+  playerMoveBtn.disabled = !canMove || active.controller !== "human";
 
   if (active.controller === "human") {
     playerBasicBtn.textContent = `Basico: ${active.abilities.basic.name}`;
-    playerSpecialBtn.textContent = `Especial: ${active.abilities.special.name} (${active.charge.special}/${active.abilities.special.chargeNeeded})`;
-    playerUltBtn.textContent = `Habilidad: ${active.abilities.ultimate.name} (${active.charge.ultimate}/${active.abilities.ultimate.chargeNeeded})`;
+    playerSpecialBtn.textContent = `Especial: ${active.abilities.special.name} (${active.charge.special}/${active.abilities.special.chargeNeeded})${gulaBlocksSpecial(active) ? " - hambre" : ""}`;
+    playerUltBtn.textContent = `Habilidad: ${active.abilities.ultimate.name} (${active.charge.ultimate}/${active.abilities.ultimate.chargeNeeded})${gulaBlocksUltimate(active) ? " - hambre" : ""}`;
 
     playerBasicBtn.classList.add("on");
     playerSpecialBtn.classList.toggle("on", active.charge.special >= active.abilities.special.chargeNeeded);
     playerUltBtn.classList.toggle("on", active.charge.ultimate >= active.abilities.ultimate.chargeNeeded);
 
     playerBasicBtn.disabled = state.actionUsed;
-    playerSpecialBtn.disabled = state.actionUsed || active.charge.special < active.abilities.special.chargeNeeded;
-    playerUltBtn.disabled = state.actionUsed || active.charge.ultimate < active.abilities.ultimate.chargeNeeded;
+    playerSpecialBtn.disabled = state.actionUsed || active.charge.special < active.abilities.special.chargeNeeded || gulaBlocksSpecial(active);
+    playerUltBtn.disabled = state.actionUsed || active.charge.ultimate < active.abilities.ultimate.chargeNeeded || gulaBlocksUltimate(active);
 
+    playerMoveBtn.addEventListener("click", () => setPreview("move", null));
     playerBasicBtn.addEventListener("click", () => useAbility("basic"));
     playerSpecialBtn.addEventListener("click", () => useAbility("special"));
     playerUltBtn.addEventListener("click", () => useAbility("ultimate"));
@@ -751,7 +893,7 @@ function applyDamage(attacker, defender, ability) {
 
   const hitChance = ability.forceHit
     ? 1
-    : Math.min(0.95, (attacker.stats.accuracy * (1 + attacker.statuses.buff.accuracyPct)) / 10);
+    : Math.min(0.95, ((attacker.stats.accuracy + attacker.statuses.auraAccuracy) * (1 + attacker.statuses.buff.accuracyPct)) / 10);
 
   if (Math.random() > hitChance) {
     pushLog(`${attacker.name} falla ${ability.name} sobre ${defender.name}.`, "warn");
@@ -761,7 +903,7 @@ function applyDamage(attacker, defender, ability) {
   const critChance = ability.guaranteedCrit ? 1 : Math.min(0.8, 0.1 + (ability.critBonus || 0) / 100);
   const isCrit = Math.random() < critChance;
 
-  const base = attacker.stats.strength * 6 + (ability.power || 0);
+  const base = (attacker.stats.strength + (attacker.statuses.buff.strFlat || 0)) * 6 + (ability.power || 0);
   const defValue = defender.stats.defense * (1 + defender.statuses.buff.defensePct);
   const reduced = Math.max(4, base - defValue * 3 + (Math.random() * 8 - 4));
   const dmg = Math.round(isCrit ? reduced * 1.5 : reduced);
@@ -930,6 +1072,65 @@ function resolveAbility(actor, target, ability) {
     case "heal_all":
       aliveUnits(actor.team).forEach((ally) => applyHeal(actor, ally, ability.healPower));
       return true;
+    case "gula_reduce_all":
+      aliveUnits(actor.team).forEach((ally) => reduceGula(ally, ability.gulaReduce));
+      pushLog(`${actor.name} reparte criollitos. El grupo reduce su Gula.`, "ok");
+      return true;
+    case "delivery_dash":
+      moveTowards(actor, target, ability.dashCells || 0);
+      if (!canHitTarget(actor, target, { ...ability, range: 1 })) return false;
+      applyDamage(actor, target, ability);
+      return true;
+    case "greasy_throw":
+      if (!canHitTarget(actor, target, ability)) return false;
+      applyDamage(actor, target, ability);
+      if (target.isAlive) {
+        target.statuses.movePenalty = Math.max(target.statuses.movePenalty, ability.duration || 1);
+        pushLog(`${target.name} queda grasoso y se mueve menos.`, "warn");
+      }
+      return true;
+    case "buff_str_radius": {
+      const affected = aliveUnits(actor.team).filter((unit) => manhattan(unit.pos, actor.pos) <= ability.range);
+      if (!affected.length) return false;
+      affected.forEach((unit) => {
+        unit.statuses.buffTurns = Math.max(unit.statuses.buffTurns, ability.duration);
+        unit.statuses.buff.strFlat = (unit.statuses.buff.strFlat || 0) + ability.strBonus;
+      });
+      pushLog(`${actor.name} mejora la fuerza de los zombies cercanos.`, "bad");
+      return true;
+    }
+    case "push_damage":
+      if (!canHitTarget(actor, target, ability)) return false;
+      applyDamage(actor, target, ability);
+      if (target.isAlive) pushTargetFromAttacker(actor, target, ability.pushCells || 1);
+      return true;
+    case "sweep_adjacent": {
+      const impacted = aliveUnits(enemyTeam(actor.team)).filter((unit) => manhattan(unit.pos, actor.pos) <= 1);
+      if (!impacted.length) return false;
+      impacted.forEach((unit) => {
+        applyDamage(actor, unit, ability);
+        if (unit.isAlive) unit.statuses.movePenalty = Math.max(unit.statuses.movePenalty, ability.duration || 1);
+      });
+      return true;
+    }
+    case "summon_spiders": {
+      const currentSpiders = state.units.filter((unit) => unit.isAlive && unit.templateId === "arana_comun").length;
+      const room = Math.max(0, (ability.maxSpiders || 4) - currentSpiders);
+      const spiderTpl = findTemplate("arana_comun", "enemy");
+      let spawned = 0;
+      for (let index = 0; index < Math.min(ability.summonCount || 2, room); index += 1) {
+        if (spawnUnitNear(spiderTpl, actor)) spawned += 1;
+      }
+      pushLog(`${actor.name} invoca ${spawned} arana(s).`, "bad");
+      return true;
+    }
+    case "aoe_burn": {
+      if (!canHitTarget(actor, target, ability)) return false;
+      const impacted = aliveUnits(enemyTeam(actor.team)).filter((unit) => manhattan(unit.pos, target.pos) <= 1);
+      if (!impacted.length) return false;
+      impacted.forEach((unit) => applyDamage(actor, unit, ability));
+      return true;
+    }
     case "delegate": {
       if (!canHitTarget(actor, target, ability)) return false;
       const ally = aliveUnits(actor.team).find((u) => u.uid !== actor.uid);
@@ -961,7 +1162,7 @@ function resolveAbility(actor, target, ability) {
     case "team_buff":
       aliveUnits(actor.team).forEach((ally) => {
         ally.statuses.buffTurns = ability.duration;
-        ally.statuses.buff = { defensePct: 0.1, accuracyPct: 0.1, extraMove: 1 };
+        ally.statuses.buff = { defensePct: 0.1, accuracyPct: 0.1, extraMove: 1, strFlat: 0 };
       });
       pushLog(`${actor.name} ordena al equipo: +defensa, +precision y +movimiento.`, "ok");
       return true;
@@ -1043,6 +1244,15 @@ function useAbility(abilityKey, forcedTargetId = null) {
   if (abilityKey === "special" && actor.charge.special < ability.chargeNeeded) return false;
   if (abilityKey === "ultimate" && actor.charge.ultimate < ability.chargeNeeded) return false;
 
+  if (abilityKey === "special" && gulaBlocksSpecial(actor)) {
+    if (actor.controller === "human") pushLog(`${actor.name} tiene demasiada hambre para usar ${ability.name}.`, "warn");
+    return false;
+  }
+  if (abilityKey === "ultimate" && gulaBlocksUltimate(actor)) {
+    if (actor.controller === "human") pushLog(`${actor.name} esta en Gula maxima y no puede usar ${ability.name}.`, "warn");
+    return false;
+  }
+
   const selected = forcedTargetId !== null ? forcedTargetId : els.targetSelect.value;
   if (!["none", "allies", "enemies", "self"].includes(ability.target) && !selected) {
     if (actor.controller === "human") pushLog("Debes elegir objetivo.", "warn");
@@ -1058,6 +1268,12 @@ function useAbility(abilityKey, forcedTargetId = null) {
 
   spendCharge(actor, abilityKey);
   state.actionUsed = true;
+
+  if (actor.controller === "human") {
+    const actionGula = abilityKey === "special" ? 5 : abilityKey === "ultimate" ? 10 : 0;
+    const smokingGula = ability.smoking ? (ability.smokingGula || 10) : 0;
+    addGula(actor, actionGula + smokingGula);
+  }
 
   if (ability.voice && Math.random() < 0.5) {
     pushLog(`${actor.name} grita ${ability.voice}.`, "ok");
@@ -1093,6 +1309,16 @@ function chooseAiTarget(actor) {
 function pickAiTargetForAbility(actor, ability) {
   if (ability.target === "self") return actor.uid;
   if (["allies", "enemies", "none"].includes(ability.target)) return "";
+
+  if (ability.target === "ally") {
+    const allies = aliveUnits(actor.team).filter((u) => u.uid !== actor.uid);
+    if (!allies.length) return actor.uid;
+    const mostWounded = allies.sort(
+      (a, b) => a.currentHp / a.stats.hp - b.currentHp / b.stats.hp
+    )[0];
+    return mostWounded.uid;
+  }
+
   const target = chooseAiTarget(actor);
   return target ? target.uid : "";
 }
@@ -1114,7 +1340,7 @@ async function performAiTurn(aiUid) {
   renderAll();
   await sleep(timing.preMove);
 
-  const moveCells = movementFromSpeed(effectiveSpeed(actor)) + actor.statuses.buff.extraMove;
+  const moveCells = effectiveMovementCells(actor);
   const moved = await animateMoveTowards(actor, target, moveCells, timing.moveStep);
   state.movedThisTurn = moved;
   renderAll();
@@ -1159,7 +1385,7 @@ function endTurn() {
 }
 
 function canReachCell(unit, cell) {
-  const move = movementFromSpeed(effectiveSpeed(unit)) + unit.statuses.buff.extraMove;
+  const move = effectiveMovementCells(unit);
   const distance = manhattan(unit.pos, cell);
   return distance <= move;
 }
@@ -1172,7 +1398,7 @@ function renderGrid() {
   let previewAbility = null;
   if (active && active.controller === "human") {
     if (state.preview.mode === "move") {
-      previewRange = movementFromSpeed(effectiveSpeed(active)) + active.statuses.buff.extraMove;
+      previewRange = effectiveMovementCells(active);
     }
     if (state.preview.mode === "ability" && state.preview.abilityKey) {
       previewAbility = active.abilities[state.preview.abilityKey] || null;
@@ -1260,7 +1486,7 @@ function renderDetails() {
     return;
   }
 
-  const move = movementFromSpeed(effectiveSpeed(unit)) + unit.statuses.buff.extraMove;
+  const move = effectiveMovementCells(unit);
   const side = unit.controller === "human" ? "Jugador" : "IA";
 
   els.unitDetails.innerHTML = `
@@ -1271,8 +1497,86 @@ function renderDetails() {
     Movimiento actual: ${move} casillas<br>
     Carga especial: ${unit.charge.special}/${unit.abilities.special.chargeNeeded}<br>
     Carga habilidad: ${unit.charge.ultimate}/${unit.abilities.ultimate.chargeNeeded}<br>
+    Gula: ${unit.gula ?? 0}<br>
     Estados: ${formatStatuses(unit)}
   `;
+}
+
+function gulaStateOf(value) {
+  const safeValue = Number(value) || 0;
+  if (safeValue >= 100) return "maxima";
+  if (safeValue >= 80) return "mucha";
+  if (safeValue >= 50) return "hambre";
+  return "normal";
+}
+
+function gulaMovePenalty(unit) {
+  if (unit.controller !== "human") return 0;
+  if (unit.gula >= 80) return 2;
+  if (unit.gula >= 50) return 1;
+  return 0;
+}
+
+function gulaBlocksSpecial(unit) {
+  return unit.controller === "human" && unit.gula >= 80;
+}
+
+function gulaBlocksUltimate(unit) {
+  return unit.controller === "human" && unit.gula >= 100;
+}
+
+function checkGulaThresholdCross(unit, before) {
+  const previous = gulaStateOf(before);
+  const current = gulaStateOf(unit.gula);
+  if (previous === current) return;
+  const messages = {
+    hambre: `${unit.name} empieza a sentir hambre (Gula ${unit.gula}).`,
+    mucha: `${unit.name} tiene mucha hambre. Especial bloqueado.`,
+    maxima: `${unit.name} llego a Gula maxima. Especial y habilidad bloqueados.`,
+    normal: `${unit.name} vuelve a un nivel de Gula normal.`
+  };
+  pushLog(messages[current], current === "normal" ? "ok" : "bad");
+}
+
+function addGula(unit, amount) {
+  if (!unit || unit.controller !== "human" || amount === 0) return;
+  const before = unit.gula;
+  unit.gula = Math.min(100, Math.max(0, unit.gula + amount));
+  checkGulaThresholdCross(unit, before);
+}
+
+function reduceGula(unit, amount) {
+  addGula(unit, -Math.abs(amount));
+}
+
+function renderGulaList() {
+  const players = state.units.filter((u) => u.controller === "human");
+  if (!players.length) {
+    els.gulaList.innerHTML = "<small>Selecciona jugadores e inicia el combate.</small>";
+    return;
+  }
+
+  els.gulaList.innerHTML = players
+    .map((u) => {
+      const st = gulaStateOf(u.gula);
+      return `
+        <div class="gula-row state-${st}">
+          <span>${u.name}</span>
+          <span class="gula-bar-wrap"><span class="gula-bar-fill"></span></span>
+          <span>${u.gula}</span>
+        </div>
+      `;
+    })
+    .join("");
+
+  els.gulaList.querySelectorAll(".gula-row").forEach((row, index) => {
+    const unit = players[index];
+    if (!unit) return;
+    const fill = row.querySelector(".gula-bar-fill");
+    if (fill) {
+      fill.style.setProperty("--gula-width", `${Math.max(0, Math.min(100, Number(unit.gula || 0)))}%`);
+    }
+  });
 }
 
 function renderHeader() {
@@ -1284,7 +1588,7 @@ function renderHeader() {
   if (!active || !state.battleStarted) {
     els.activeUnitLabel.textContent = "Esperando inicio...";
   } else {
-    const move = movementFromSpeed(effectiveSpeed(active)) + active.statuses.buff.extraMove;
+    const move = effectiveMovementCells(active);
     const tag = active.controller === "ai" ? "IA" : "Jugador";
     els.activeUnitLabel.textContent = `Turno de ${active.name} [${tag}] - mov ${move}`;
   }
@@ -1302,6 +1606,7 @@ function renderAll() {
   renderGrid();
   renderActions();
   renderDetails();
+  renderGulaList();
 }
 
 function wireEvents() {
@@ -1312,6 +1617,24 @@ function wireEvents() {
   els.aiSpeedSelect.addEventListener("change", () => {
     state.aiSpeed = els.aiSpeedSelect.value;
     pushLog(`Velocidad IA ajustada a ${els.aiSpeedSelect.options[els.aiSpeedSelect.selectedIndex].text}.`, "ok");
+  });
+
+  els.houseResetBtn.addEventListener("click", () => {
+    state.units.filter((u) => u.controller === "human").forEach((u) => { u.gula = 0; });
+    pushLog("El grupo vuelve a la casa de Nico. La Gula se resetea para todos.", "ok");
+    renderAll();
+  });
+
+  els.eatBtn.addEventListener("click", () => {
+    const active = getUnit(state.activeUnitId);
+    if (!state.battleStarted || !active || active.controller !== "human") {
+      pushLog("Solo se puede comer en el turno de un personaje jugador.", "warn");
+      return;
+    }
+    const amount = Number(els.foodSelect.value);
+    reduceGula(active, amount);
+    pushLog(`${active.name} come (${els.foodSelect.options[els.foodSelect.selectedIndex].text}).`, "ok");
+    renderAll();
   });
 
   els.endTurnBtn.addEventListener("click", () => {

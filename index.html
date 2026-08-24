@@ -5,6 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Nico 420 - Prototipo de Logica</title>
   <link rel="icon" type="image/png" href="assets/logo.png" />
+  <link rel="shortcut icon" type="image/png" href="assets/logo.png" />
+  <link rel="apple-touch-icon" href="assets/logo.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet" />
@@ -19,7 +21,7 @@
         <p>Prototipo tactico por turnos</p>
       </div>
       <div class="logo-badge" aria-label="Logo EK Studio">
-        <img src="assets/ekstudio-logo-sin-fondo-2.png" alt="EK Studio" class="logo-image" />
+        <img src="assets/ekstudio-logo-sin-fondo-2.png" alt="EK Studio" class="logo-image" decoding="async" />
       </div>
     </div>
 
@@ -67,6 +69,26 @@
         <p>Ronda: <strong id="roundValue">-</strong></p>
         <p>Turno: <strong id="turnValue">-</strong></p>
         <p>Araña activa: <strong id="spiderValue">No</strong></p>
+        <button id="houseResetBtn" class="ghost house-btn">🏠 Volver a la casa (reset Gula)</button>
+      </section>
+
+      <section class="gula-zone">
+        <h3>Gula del grupo</h3>
+        <div id="gulaList" class="gula-list"><small>Selecciona jugadores e inicia el combate.</small></div>
+      </section>
+
+      <section class="food-zone">
+        <h3>Comida (reduce Gula)</h3>
+        <select id="foodSelect">
+          <option value="5">🍬 Caramelo (-5)</option>
+          <option value="10">🍪 Galletitas (-10)</option>
+          <option value="15">🍫 Alfajor (-15)</option>
+          <option value="20">🍦 Helado (-20)</option>
+          <option value="25">🍟 Papas (-25)</option>
+          <option value="40" selected>🍔 Hamburguesa (-40)</option>
+          <option value="70">🥩 Asado (-70)</option>
+        </select>
+        <button id="eatBtn" class="ghost">Comer (unidad activa)</button>
       </section>
 
       <section class="actions-zone">
