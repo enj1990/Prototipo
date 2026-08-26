@@ -125,7 +125,7 @@ body {
 
 .setup-inline {
   display: grid;
-  grid-template-columns: 150px auto;
+  grid-template-columns: 150px 150px auto;
   gap: 0.7rem;
   align-items: end;
 }

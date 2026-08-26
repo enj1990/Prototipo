@@ -277,6 +277,14 @@ const enemyTemplates = [
   }
 ];
 
+const WAVE_CONFIG = {
+  facil: { wave2: 0, wave3: 0 },
+  normal: { wave2: 2, wave3: 2 },
+  dificil: { wave2: 4, wave3: 4 }
+};
+
+const WAVE_ROUNDS = { wave2: 4, wave3: 7 };
+
 const els = {
   playerPickerGrid: document.getElementById("playerPickerGrid"),
   enemyPickerGrid: document.getElementById("enemyPickerGrid"),
@@ -284,10 +292,12 @@ const els = {
   startBtn: document.getElementById("startBtn"),
   resetBtn: document.getElementById("resetBtn"),
   aiSpeedSelect: document.getElementById("aiSpeedSelect"),
+  difficultySelect: document.getElementById("difficultySelect"),
   playerStrip: document.getElementById("playerStrip"),
   roundValue: document.getElementById("roundValue"),
   turnValue: document.getElementById("turnValue"),
   spiderValue: document.getElementById("spiderValue"),
+  waveValue: document.getElementById("waveValue"),
   activeUnitLabel: document.getElementById("activeUnitLabel"),
   grid: document.getElementById("grid"),
   playerActionsContainer: document.getElementById("playerActionsContainer"),
@@ -317,6 +327,8 @@ const state = {
     enemyIds: []
   },
   aiSpeed: "normal",
+  difficulty: "normal",
+  wavesSpawned: { wave2: false, wave3: false },
   preview: {
     mode: "none",
     abilityKey: null
@@ -542,6 +554,49 @@ function spawnUnitNear(template, nearUnit) {
   return unit;
 }
 
+function spawnWaveUnit(template) {
+  const candidates = [];
+  for (let x = GRID_COLS - 1; x >= GRID_COLS - 3 && !candidates.length; x -= 1) {
+    for (let y = 0; y < GRID_ROWS; y += 1) {
+      const cell = { x, y };
+      if (isWalkable(cell, null)) candidates.push(cell);
+    }
+  }
+
+  if (!candidates.length) return null;
+  const unit = createUnit(template, "B", state.units.length, 1, "ai");
+  unit.uid = `B_${template.id}_wave_${Math.floor(Math.random() * 99999)}`;
+  unit.pos = candidates[Math.floor(Math.random() * candidates.length)];
+  state.units.push(unit);
+  return unit;
+}
+
+function spawnWave(count) {
+  if (count <= 0) return;
+  const names = [];
+  for (let index = 0; index < count; index += 1) {
+    const template = enemyTemplates[Math.floor(Math.random() * enemyTemplates.length)];
+    const unit = spawnWaveUnit(template);
+    if (unit) names.push(unit.name);
+  }
+  if (names.length) {
+    pushLog(`Oleada de refuerzos: aparecen ${names.join(", ")}.`, "bad");
+  }
+}
+
+function maybeSpawnWave() {
+  const config = WAVE_CONFIG[state.difficulty] || WAVE_CONFIG.normal;
+  const waveKey = state.round === WAVE_ROUNDS.wave2 ? "wave2" : state.round === WAVE_ROUNDS.wave3 ? "wave3" : null;
+  if (!waveKey || state.wavesSpawned[waveKey]) return;
+
+  state.wavesSpawned[waveKey] = true;
+  const count = config[waveKey];
+  if (count > 0) {
+    pushLog("Se escuchan mas zombies acercandose por la cuadra...", "warn");
+    spawnWave(count);
+  }
+}
+
 function startBattle() {
   const teamAIds = [...state.draftTeams.playerIds];
   const teamBIds = [...state.draftTeams.enemyIds];
@@ -560,6 +615,7 @@ function startBattle() {
   state.selectedUnitId = null;
   state.preview = { mode: "none", abilityKey: null };
   state.aiPlan = { activeUid: null, step: "" };
+  state.wavesSpawned = { wave2: false, wave3: false };
 
   teamAIds.forEach((id, idx) => {
     const tpl = findTemplate(id, "player");
@@ -589,6 +645,7 @@ function resetBattle() {
   state.selectedUnitId = null;
   state.preview = { mode: "none", abilityKey: null };
   state.aiPlan = { activeUid: null, step: "" };
+  state.wavesSpawned = { wave2: false, wave3: false };
   els.log.innerHTML = "";
   els.targetSelect.innerHTML = "";
   renderAll();
@@ -728,6 +785,7 @@ function beginTurn() {
   if (state.turnIndex >= state.turnOrder.length) {
     state.turnIndex = 0;
     state.round += 1;
+    maybeSpawnWave();
     recalculateTurnOrder();
   }
 
@@ -1590,6 +1648,16 @@ function renderHeader() {
   els.roundValue.textContent = String(state.round);
   els.turnValue.textContent = state.turnOrder.length ? `${state.turnIndex + 1}/${state.turnOrder.length}` : "-";
   els.spiderValue.textContent = isSpiderAlive() ? "Si" : "No";
+  const config = WAVE_CONFIG[state.difficulty] || WAVE_CONFIG.normal;
+  if (!config.wave2 && !config.wave3) {
+    els.waveValue.textContent = "Unica (facil)";
+  } else if (state.wavesSpawned.wave3) {
+    els.waveValue.textContent = "3/3 (ultima ya llego)";
+  } else if (state.wavesSpawned.wave2) {
+    els.waveValue.textContent = `2/3 - proxima en ronda ${WAVE_ROUNDS.wave3} (+${config.wave3})`;
+  } else {
+    els.waveValue.textContent = `1/3 - proxima en ronda ${WAVE_ROUNDS.wave2} (+${config.wave2})`;
+  }
 
   const active = getUnit(state.activeUnitId);
   if (!active || !state.battleStarted) {
@@ -1624,6 +1692,12 @@ function wireEvents() {
   els.aiSpeedSelect.addEventListener("change", () => {
     state.aiSpeed = els.aiSpeedSelect.value;
     pushLog(`Velocidad IA ajustada a ${els.aiSpeedSelect.options[els.aiSpeedSelect.selectedIndex].text}.`, "ok");
+  });
+
+  els.difficultySelect.addEventListener("change", () => {
+    state.difficulty = els.difficultySelect.value;
+    pushLog(`Dificultad ajustada a ${els.difficultySelect.options[els.difficultySelect.selectedIndex].text}.`, "ok");
+    renderAll();
   });
 
   els.houseResetBtn.addEventListener("click", () => {
