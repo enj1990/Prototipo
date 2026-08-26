@@ -480,7 +480,7 @@ function createSpawnRows(count) {
   });
 }
 
-function createUnit(template, team, idx, teamSize, controller, templateGroup) {
+function createUnit(template, team, idx, teamSize, controller) {
   const spawnRows = createSpawnRows(teamSize);
   const startPos = team === "A"
     ? { x: 1, y: spawnRows[idx] }
@@ -490,7 +490,6 @@ function createUnit(template, team, idx, teamSize, controller, templateGroup) {
     uid: `${team}_${template.id}_${idx}_${Math.floor(Math.random() * 9999)}`,
     team,
     templateId: template.id,
-    templateGroup,
     controller,
     ai: template.ai || null,
     name: template.name,
@@ -536,7 +535,7 @@ function spawnUnitNear(template, nearUnit) {
 
   if (!candidates.length) return null;
   const pos = candidates[Math.floor(Math.random() * candidates.length)];
-  const unit = createUnit(template, nearUnit.team, state.units.length, 1, "ai", "enemy");
+  const unit = createUnit(template, nearUnit.team, state.units.length, 1, "ai");
   unit.uid = `${nearUnit.team}_${template.id}_spawn_${Math.floor(Math.random() * 99999)}`;
   unit.pos = pos;
   state.units.push(unit);
@@ -564,12 +563,12 @@ function startBattle() {
 
   teamAIds.forEach((id, idx) => {
     const tpl = findTemplate(id, "player");
-    state.units.push(createUnit(tpl, "A", idx, TEAM_SIZE, "human", "player"));
+    state.units.push(createUnit(tpl, "A", idx, TEAM_SIZE, "human"));
   });
 
   teamBIds.forEach((id, idx) => {
     const tpl = findTemplate(id, "enemy");
-    state.units.push(createUnit(tpl, "B", idx, TEAM_SIZE, "ai", "enemy"));
+    state.units.push(createUnit(tpl, "B", idx, TEAM_SIZE, "ai"));
   });
 
   recomputeAuras();
@@ -615,13 +614,17 @@ function recalculateTurnOrder() {
     .map((x) => x.uid);
 }
 
+function totalSpeed(unit) {
+  return unit.stats.speed + unit.statuses.auraSpeed;
+}
+
 function effectiveSpeed(unit) {
   const slow = unit.statuses.movePenalty > 0 ? 1 : 0;
-  return Math.max(1, unit.stats.speed + unit.statuses.auraSpeed - slow);
+  return Math.max(1, totalSpeed(unit) - slow);
 }
 
 function effectiveMovementCells(unit) {
-  const base = movementFromSpeed(unit.stats.speed + unit.statuses.auraSpeed);
+  const base = movementFromSpeed(totalSpeed(unit));
   const penalty = unit.statuses.movePenalty > 0 ? 1 : 0;
   const gulaPenalty = gulaMovePenalty(unit);
   const extra = unit.statuses.buff.extraMove || 0;
@@ -883,9 +886,13 @@ function applyInfection(target, turns, damagePerTurn) {
 
 function handleOnDeath(unit) {
   if (!unit.passives.includes("explosion_descomposicion")) return;
-  const nearby = state.units.filter((u) => u.isAlive && manhattan(u.pos, unit.pos) <= 1);
+  const nearby = state.units.filter(
+    (u) => u.isAlive && u.team !== unit.team && manhattan(u.pos, unit.pos) <= 1
+  );
   nearby.forEach((u) => applyInfection(u, 3, 3));
-  pushLog(`${unit.name} explota al morir y contagia alrededor.`, "bad");
+  if (nearby.length) {
+    pushLog(`${unit.name} explota al morir y contagia alrededor.`, "bad");
+  }
 }
 
 function applyDamage(attacker, defender, ability) {
