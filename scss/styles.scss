@@ -144,6 +144,10 @@ body {
   align-items: stretch;
 }
 
+.pickers-row > * {
+  min-width: 0;
+}
+
 .picker-box,
 .top-center-controls {
   border: 1px solid var(--line);
@@ -152,6 +156,8 @@ body {
   padding: 0.45rem;
   min-height: 170px;
   height: 170px;
+  min-width: 0;
+  overflow: hidden;
 }
 
 .picker-box h3 {
@@ -213,6 +219,12 @@ body {
   gap: 0.38rem;
 }
 
+.setup-inline,
+.setup-buttons,
+.player-strip-wrap {
+  min-width: 0;
+}
+
 .setup-speed select {
   height: 34px;
 }
@@ -246,6 +258,19 @@ select {
   display: flex;
   gap: 0.4rem;
   align-items: stretch;
+}
+
+.setup-buttons button {
+  width: auto;
+  flex: 1 1 0;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding-left: 0.35rem;
+  padding-right: 0.35rem;
+  font-size: 0.6rem;
+  letter-spacing: 0.01em;
 }
 
 button {
@@ -320,6 +345,8 @@ button:disabled {
   overflow-y: hidden;
   min-height: 56px;
   max-height: 56px;
+  min-width: 0;
+  max-width: 100%;
   padding: 0.05rem 0.05rem 0.2rem;
 }
 
@@ -329,6 +356,7 @@ button:disabled {
   background: var(--surface-2);
   padding: 0.3rem 0.42rem;
   min-width: 120px;
+  flex: 0 0 120px;
   display: grid;
   grid-template-columns: 20px 1fr;
   gap: 0.35rem;
