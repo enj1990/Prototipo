@@ -22,15 +22,14 @@ const ICONS = {
   ivan: "🏃",
   zombie_vecino: "🧟",
   arana_comun: "🕷️",
-  zombie_arana: "🕷️",
   zombie_vacunado: "🧟‍♂️",
   zombie_recien: "🏃",
   zombie_blandito: "🤢",
+  zombie_delivery: "🛵",
   zombie_barrevereda: "🧹",
   zombie_picado: "⚽",
   zombie_arana_grande: "🕷️",
-  zombie_asador: "🥩",
-  zombie_delivery: "🛵"
+  zombie_asador: "🥩"
 };
 
 const characterTemplates = [
@@ -150,7 +149,7 @@ const enemyTemplates = [
     name: "Zombie Vecino",
     role: "Basico",
     ai: "agresivo",
-    stats: { hp: 60, strength: 4, defense: 4, accuracy: 5, speed: 3 },
+    stats: { hp: 85, strength: 4, defense: 4, accuracy: 5, speed: 3 },
     passives: [],
     abilities: {
       basic: { name: "Manotazo", kind: "damage", target: "enemy", range: 1, power: 8, chargeNeeded: 0 },
@@ -180,7 +179,7 @@ const enemyTemplates = [
     passives: [],
     abilities: {
       basic: { name: "Golpe pesado", kind: "damage", target: "enemy", range: 1, power: 18, chargeNeeded: 0 },
-      special: { name: "Embestida", kind: "charge_strike", target: "enemy", range: 2, power: 22, chargeNeeded: 2 },
+      special: { name: "Embestida", kind: "charge_strike", target: "enemy", range: 2, power: 22, chargeNeeded: 2, dashCells: 1 },
       ultimate: { name: "Aplastar", kind: "damage", target: "enemy", range: 1, power: 24, chargeNeeded: 4 }
     }
   },
@@ -189,11 +188,11 @@ const enemyTemplates = [
     name: "Zombie Recien Convertido",
     role: "Rapido",
     ai: "cazador",
-    stats: { hp: 75, strength: 5, defense: 3, accuracy: 6, speed: 10 },
+    stats: { hp: 90, strength: 5, defense: 3, accuracy: 6, speed: 10 },
     passives: [],
     abilities: {
       basic: { name: "Zarpazo", kind: "damage", target: "enemy", range: 1, power: 10, chargeNeeded: 0 },
-      special: { name: "Carrera descontrolada", kind: "dash_strike", target: "enemy", range: 5, power: 16, chargeNeeded: 2 },
+      special: { name: "Carrera descontrolada", kind: "dash_strike", target: "enemy", range: 5, power: 16, chargeNeeded: 2, dashCells: 2 },
       ultimate: { name: "Rasgado brutal", kind: "damage", target: "enemy", range: 1, power: 19, chargeNeeded: 3 }
     }
   },
@@ -202,7 +201,7 @@ const enemyTemplates = [
     name: "Zombie Blandito",
     role: "Rango / infeccion",
     ai: "hostigador",
-    stats: { hp: 45, strength: 5, defense: 2, accuracy: 6, speed: 1 },
+    stats: { hp: 55, strength: 5, defense: 2, accuracy: 6, speed: 1 },
     passives: ["explosion_descomposicion"],
     abilities: {
       basic: { name: "Vomito", kind: "infect_damage", target: "enemy", range: 4, power: 7, chargeNeeded: 0, infectChance: 0.35, infectTurns: 3 },
@@ -210,17 +209,27 @@ const enemyTemplates = [
       ultimate: { name: "Escupitajo toxico", kind: "infect_damage", target: "enemy", range: 5, power: 11, chargeNeeded: 3, infectChance: 0.5, infectTurns: 3 }
     }
   },
+  /*
+   * Los siguientes 5 enemigos vienen del documento de diseño de nuevos enemigos.
+   * IMPORTANTE: el documento original solo define basico + especial para
+   * Delivery, Barre Vereda, Arana Grande y Asador (2 niveles, no 3). Para no
+   * romper el patron que ya traia este archivo -donde los primeros 5 zombies
+   * tienen una "ultimate" que TAMPOCO estaba en el documento original de esos
+   * 5- se agrego una tercera habilidad simple e inventada a cada uno, marcada
+   * aca abajo como NO CANONICA. Si preferis sacarlas o reemplazarlas por algo
+   * definido en el documento, se sacan sin tocar nada mas.
+   */
   {
     id: "zombie_delivery",
     name: "Zombie Delivery",
     role: "Movilidad",
     ai: "cazador",
-    stats: { hp: 70, strength: 4, defense: 3, accuracy: 7, speed: 9 },
+    stats: { hp: 80, strength: 4, defense: 3, accuracy: 7, speed: 9 },
     passives: [],
     abilities: {
       basic: { name: "Delivery", kind: "delivery_dash", target: "enemy", range: 1, power: 9, chargeNeeded: 0, dashCells: 1 },
       special: { name: "Pedido equivocado", kind: "greasy_throw", target: "enemy", range: 4, power: 9, chargeNeeded: 2, duration: 1 },
-      ultimate: { name: "Reparto expres", kind: "damage", target: "enemy", range: 1, power: 18, chargeNeeded: 3 }
+      ultimate: { name: "Reparto expres", kind: "damage", target: "enemy", range: 1, power: 18, chargeNeeded: 3 } // NO CANONICA
     }
   },
   {
@@ -228,12 +237,12 @@ const enemyTemplates = [
     name: "Zombie Barre Vereda",
     role: "Soporte / Zona",
     ai: "hostigador",
-    stats: { hp: 55, strength: 3, defense: 3, accuracy: 8, speed: 5 },
+    stats: { hp: 65, strength: 3, defense: 3, accuracy: 8, speed: 5 },
     passives: ["chusmerio_aura"],
     abilities: {
       basic: { name: "Escobazo", kind: "damage", target: "enemy", range: 1, power: 6, chargeNeeded: 0 },
-      special: { name: "Yo vi todo", kind: "buff_str_radius", target: "enemies", range: 3, chargeNeeded: 2, duration: 2, strBonus: 2 },
-      ultimate: { name: "Escobazo doble", kind: "damage", target: "enemy", range: 1, power: 14, chargeNeeded: 3 }
+      special: { name: "¡YO VI TODO!", kind: "buff_str_radius", target: "enemies", range: 3, chargeNeeded: 2, duration: 2, strBonus: 2 },
+      ultimate: { name: "Escobazo doble", kind: "damage", target: "enemy", range: 1, power: 14, chargeNeeded: 3 } // NO CANONICA
     }
   },
   {
@@ -241,12 +250,12 @@ const enemyTemplates = [
     name: "Zombie del Picado",
     role: "Control",
     ai: "agresivo",
-    stats: { hp: 80, strength: 6, defense: 4, accuracy: 7, speed: 8 },
+    stats: { hp: 90, strength: 6, defense: 4, accuracy: 7, speed: 8 },
     passives: [],
     abilities: {
       basic: { name: "Patada", kind: "damage", target: "enemy", range: 1, power: 10, chargeNeeded: 0 },
       special: { name: "Pelotazo", kind: "push_damage", target: "enemy", range: 4, power: 14, chargeNeeded: 2, pushCells: 1 },
-      ultimate: { name: "Falta", kind: "sweep_adjacent", target: "enemies", range: 1, power: 8, chargeNeeded: 3, duration: 1 }
+      ultimate: { name: "¡Falta!", kind: "sweep_adjacent", target: "enemies", range: 1, power: 8, chargeNeeded: 3, duration: 1 }
     }
   },
   {
@@ -254,12 +263,12 @@ const enemyTemplates = [
     name: "Zombie Arana",
     role: "Invocador",
     ai: "control",
-    stats: { hp: 75, strength: 4, defense: 4, accuracy: 7, speed: 6 },
+    stats: { hp: 85, strength: 4, defense: 4, accuracy: 7, speed: 6 },
     passives: [],
     abilities: {
       basic: { name: "Aranazo", kind: "damage", target: "enemy", range: 1, power: 9, chargeNeeded: 0 },
-      special: { name: "Salgan", kind: "summon_spiders", target: "none", range: 0, chargeNeeded: 2, summonCount: 2, maxSpiders: 4 },
-      ultimate: { name: "Enjambre furioso", kind: "damage", target: "enemy", range: 1, power: 13, chargeNeeded: 3 }
+      special: { name: "¡SALGAN!", kind: "summon_spiders", target: "none", range: 0, chargeNeeded: 2, summonCount: 2, maxSpiders: 4 },
+      ultimate: { name: "Enjambre furioso", kind: "damage", target: "enemy", range: 1, power: 13, chargeNeeded: 3 } // NO CANONICA
     }
   },
   {
@@ -272,18 +281,10 @@ const enemyTemplates = [
     abilities: {
       basic: { name: "Escobillazo", kind: "damage", target: "enemy", range: 1, power: 9, chargeNeeded: 0 },
       special: { name: "Brasas", kind: "aoe_burn", target: "enemy", range: 4, power: 10, chargeNeeded: 2 },
-      ultimate: { name: "Explosion de brasas", kind: "aoe_all", target: "enemies", range: 99, power: 12, chargeNeeded: 4 }
+      ultimate: { name: "Explosion de brasas", kind: "aoe_all", target: "enemies", range: 99, power: 12, chargeNeeded: 4 } // NO CANONICA
     }
   }
 ];
-
-const WAVE_CONFIG = {
-  facil: { wave2: 0, wave3: 0 },
-  normal: { wave2: 2, wave3: 2 },
-  dificil: { wave2: 4, wave3: 4 }
-};
-
-const WAVE_ROUNDS = { wave2: 4, wave3: 7 };
 
 const els = {
   playerPickerGrid: document.getElementById("playerPickerGrid"),
@@ -293,11 +294,11 @@ const els = {
   resetBtn: document.getElementById("resetBtn"),
   aiSpeedSelect: document.getElementById("aiSpeedSelect"),
   difficultySelect: document.getElementById("difficultySelect"),
+  waveValue: document.getElementById("waveValue"),
   playerStrip: document.getElementById("playerStrip"),
   roundValue: document.getElementById("roundValue"),
   turnValue: document.getElementById("turnValue"),
   spiderValue: document.getElementById("spiderValue"),
-  waveValue: document.getElementById("waveValue"),
   activeUnitLabel: document.getElementById("activeUnitLabel"),
   grid: document.getElementById("grid"),
   playerActionsContainer: document.getElementById("playerActionsContainer"),
@@ -311,6 +312,15 @@ const els = {
   foodSelect: document.getElementById("foodSelect"),
   eatBtn: document.getElementById("eatBtn")
 };
+
+const WAVE_CONFIG = {
+  facil: { wave2: 0, wave3: 0 },
+  normal: { wave2: 2, wave3: 2 },
+  dificil: { wave2: 4, wave3: 4 }
+};
+// Las oleadas de refuerzo aparecen cada 3 rondas despues de la inicial (ronda 4 y ronda 7),
+// obligando a resolver el combate mas rapido en dificultades altas.
+const WAVE_ROUNDS = { wave2: 4, wave3: 7 };
 
 const state = {
   units: [],
@@ -374,6 +384,87 @@ function clearPreview() {
 function movementFromSpeed(speed) {
   const found = SPEED_TO_MOVEMENT.find((r) => speed >= r.min && speed <= r.max);
   return found ? found.cells : 1;
+}
+
+/*
+ * FIX #4: el penalty de movimiento (Saltos de Ivan, Telarana de la arana)
+ * antes restaba 1 punto de Velocidad y se lo pasaba a movementFromSpeed().
+ * Como el movimiento se calcula por rangos de Velocidad (1-3, 4-5, 6-7...),
+ * la mayoria de las veces -1 de Velocidad no cruzaba de rango y el efecto
+ * era invisible (ej: Zurdo con Vel 9 bajaba a 8 y seguia moviendo 4 casillas).
+ * Ahora el penalty resta una casilla de movimiento DIRECTAMENTE, garantizando
+ * que el efecto siempre se sienta. effectiveSpeed() se mantiene aparte y solo
+ * se usa para iniciativa/orden de turno.
+ */
+// Velocidad total incluyendo el aura de la Zombie Barre Vereda (+1 Vel a zombies cercanos)
+function totalSpeed(unit) {
+  return unit.stats.speed + (unit.statuses.auraSpeed || 0);
+}
+
+function effectiveSpeed(unit) {
+  const slow = unit.statuses.movePenalty > 0 ? 1 : 0;
+  return Math.max(1, totalSpeed(unit) - slow);
+}
+
+/*
+ * Sistema de Gula (exclusivo de personajes jugables, controller === "human").
+ * 0-49 normal | 50-79 hambre (-1 casilla) | 80-99 mucha hambre (-2 casillas +
+ * bloquea especial) | 100 gula maxima (-2 casillas + bloquea especial y habilidad).
+ * La Gula nunca bloquea el basico ni el movimiento por completo, tal como se
+ * definio en el documento de diseno.
+ */
+function gulaStateOf(gula) {
+  if (gula >= 100) return "maxima";
+  if (gula >= 80) return "mucha";
+  if (gula >= 50) return "hambre";
+  return "normal";
+}
+
+function gulaMovePenalty(unit) {
+  if (unit.controller !== "human") return 0;
+  if (unit.gula >= 80) return 2;
+  if (unit.gula >= 50) return 1;
+  return 0;
+}
+
+function gulaBlocksSpecial(unit) {
+  return unit.controller === "human" && unit.gula >= 80;
+}
+
+function gulaBlocksUltimate(unit) {
+  return unit.controller === "human" && unit.gula >= 100;
+}
+
+function checkGulaThresholdCross(unit, before) {
+  const prevState = gulaStateOf(before);
+  const newState = gulaStateOf(unit.gula);
+  if (prevState === newState) return;
+  const msgs = {
+    hambre: `${unit.name} empieza a sentir hambre (Gula ${unit.gula}).`,
+    mucha: `${unit.name} tiene MUCHA hambre. Ataque especial bloqueado.`,
+    maxima: `${unit.name} llego a Gula maxima. Especial y habilidad bloqueados.`,
+    normal: `${unit.name} vuelve a un nivel de Gula normal.`
+  };
+  pushLog(msgs[newState] || `${unit.name} cambia su estado de Gula.`, newState === "normal" ? "ok" : "bad");
+}
+
+function addGula(unit, amount) {
+  if (unit.controller !== "human" || amount === 0) return;
+  const before = unit.gula;
+  unit.gula = Math.min(100, Math.max(0, unit.gula + amount));
+  checkGulaThresholdCross(unit, before);
+}
+
+function reduceGula(unit, amount) {
+  addGula(unit, -Math.abs(amount));
+}
+
+function effectiveMovementCells(unit) {
+  const base = movementFromSpeed(totalSpeed(unit));
+  const statusPenalty = unit.statuses.movePenalty > 0 ? 1 : 0;
+  const gulaPenalty = gulaMovePenalty(unit);
+  const extra = unit.statuses.buff.extraMove || 0;
+  return Math.max(1, base - statusPenalty - gulaPenalty + extra);
 }
 
 function sampleWithoutReplacement(arr, count) {
@@ -492,7 +583,7 @@ function createSpawnRows(count) {
   });
 }
 
-function createUnit(template, team, idx, teamSize, controller) {
+function createUnit(template, team, idx, teamSize, controller, templateGroup) {
   const spawnRows = createSpawnRows(teamSize);
   const startPos = team === "A"
     ? { x: 1, y: spawnRows[idx] }
@@ -502,6 +593,7 @@ function createUnit(template, team, idx, teamSize, controller) {
     uid: `${team}_${template.id}_${idx}_${Math.floor(Math.random() * 9999)}`,
     team,
     templateId: template.id,
+    templateGroup,
     controller,
     ai: template.ai || null,
     name: template.name,
@@ -512,8 +604,8 @@ function createUnit(template, team, idx, teamSize, controller) {
     isAlive: true,
     passives: [...template.passives],
     abilities: deepClone(template.abilities),
+    gula: controller === "human" ? 0 : null,
     charge: { special: 0, ultimate: 0 },
-    gula: 0,
     statuses: {
       skipTurn: 0,
       stunned: 0,
@@ -530,71 +622,56 @@ function createUnit(template, team, idx, teamSize, controller) {
   };
 }
 
+// Crea una unidad enemiga "al vuelo" durante el combate (usado por el Zombie Arana al invocar)
 function spawnUnitNear(template, nearUnit) {
   if (!template) return null;
-  const candidates = [];
-
-  for (let radius = 1; radius <= 3 && !candidates.length; radius += 1) {
-    for (let dx = -radius; dx <= radius; dx += 1) {
-      for (let dy = -radius; dy <= radius; dy += 1) {
+  let candidates = [];
+  for (let r = 1; r <= 3 && !candidates.length; r += 1) {
+    for (let dx = -r; dx <= r; dx += 1) {
+      for (let dy = -r; dy <= r; dy += 1) {
         const cell = { x: nearUnit.pos.x + dx, y: nearUnit.pos.y + dy };
-        if (manhattan(cell, nearUnit.pos) === radius && isWalkable(cell, null)) {
+        if (manhattan(cell, nearUnit.pos) === r && isWalkable(cell, null)) {
           candidates.push(cell);
         }
       }
     }
   }
-
   if (!candidates.length) return null;
-  const pos = candidates[Math.floor(Math.random() * candidates.length)];
-  const unit = createUnit(template, nearUnit.team, state.units.length, 1, "ai");
-  unit.uid = `${nearUnit.team}_${template.id}_spawn_${Math.floor(Math.random() * 99999)}`;
-  unit.pos = pos;
-  state.units.push(unit);
-  return unit;
-}
+  const cell = candidates[Math.floor(Math.random() * candidates.length)];
 
-function spawnWaveUnit(template) {
-  const candidates = [];
-  for (let x = GRID_COLS - 1; x >= GRID_COLS - 3 && !candidates.length; x -= 1) {
-    for (let y = 0; y < GRID_ROWS; y += 1) {
-      const cell = { x, y };
-      if (isWalkable(cell, null)) candidates.push(cell);
+  const unit = {
+    uid: `${nearUnit.team}_${template.id}_spawn_${Math.floor(Math.random() * 99999)}`,
+    team: nearUnit.team,
+    templateId: template.id,
+    templateGroup: "enemy",
+    controller: "ai",
+    ai: template.ai || null,
+    name: template.name,
+    role: template.role,
+    stats: deepClone(template.stats),
+    currentHp: template.stats.hp,
+    pos: cell,
+    isAlive: true,
+    passives: [...template.passives],
+    abilities: deepClone(template.abilities),
+    gula: null,
+    charge: { special: 0, ultimate: 0 },
+    statuses: {
+      skipTurn: 0,
+      stunned: 0,
+      tauntedBy: null,
+      tauntTurns: 0,
+      movePenalty: 0,
+      infectionTurns: 0,
+      infectionDamage: 0,
+      buffTurns: 0,
+      auraSpeed: 0,
+      auraAccuracy: 0,
+      buff: { defensePct: 0, accuracyPct: 0, extraMove: 0, strFlat: 0 }
     }
-  }
-
-  if (!candidates.length) return null;
-  const unit = createUnit(template, "B", state.units.length, 1, "ai");
-  unit.uid = `B_${template.id}_wave_${Math.floor(Math.random() * 99999)}`;
-  unit.pos = candidates[Math.floor(Math.random() * candidates.length)];
+  };
   state.units.push(unit);
   return unit;
-}
-
-function spawnWave(count) {
-  if (count <= 0) return;
-  const names = [];
-  for (let index = 0; index < count; index += 1) {
-    const template = enemyTemplates[Math.floor(Math.random() * enemyTemplates.length)];
-    const unit = spawnWaveUnit(template);
-    if (unit) names.push(unit.name);
-  }
-  if (names.length) {
-    pushLog(`Oleada de refuerzos: aparecen ${names.join(", ")}.`, "bad");
-  }
-}
-
-function maybeSpawnWave() {
-  const config = WAVE_CONFIG[state.difficulty] || WAVE_CONFIG.normal;
-  const waveKey = state.round === WAVE_ROUNDS.wave2 ? "wave2" : state.round === WAVE_ROUNDS.wave3 ? "wave3" : null;
-  if (!waveKey || state.wavesSpawned[waveKey]) return;
-
-  state.wavesSpawned[waveKey] = true;
-  const count = config[waveKey];
-  if (count > 0) {
-    pushLog("Se escuchan mas zombies acercandose por la cuadra...", "warn");
-    spawnWave(count);
-  }
 }
 
 function startBattle() {
@@ -619,15 +696,14 @@ function startBattle() {
 
   teamAIds.forEach((id, idx) => {
     const tpl = findTemplate(id, "player");
-    state.units.push(createUnit(tpl, "A", idx, TEAM_SIZE, "human"));
+    state.units.push(createUnit(tpl, "A", idx, TEAM_SIZE, "human", "player"));
   });
 
   teamBIds.forEach((id, idx) => {
     const tpl = findTemplate(id, "enemy");
-    state.units.push(createUnit(tpl, "B", idx, TEAM_SIZE, "ai"));
+    state.units.push(createUnit(tpl, "B", idx, TEAM_SIZE, "ai", "enemy"));
   });
 
-  recomputeAuras();
   recalculateTurnOrder();
   pushLog("Comienza el combate 4v4.", "ok");
   beginTurn();
@@ -671,49 +747,35 @@ function recalculateTurnOrder() {
     .map((x) => x.uid);
 }
 
-function totalSpeed(unit) {
-  return unit.stats.speed + unit.statuses.auraSpeed;
-}
-
-function effectiveSpeed(unit) {
-  const slow = unit.statuses.movePenalty > 0 ? 1 : 0;
-  return Math.max(1, totalSpeed(unit) - slow);
-}
-
-function effectiveMovementCells(unit) {
-  const base = movementFromSpeed(totalSpeed(unit));
-  const penalty = unit.statuses.movePenalty > 0 ? 1 : 0;
-  const gulaPenalty = gulaMovePenalty(unit);
-  const extra = unit.statuses.buff.extraMove || 0;
-  return Math.max(1, base - penalty - gulaPenalty + extra);
-}
-
 function isSpiderAlive() {
   return state.units.some((u) => u.isAlive && u.templateId === "arana_comun");
 }
 
+// Aura del Zombie Asador: +5 Gula al comienzo del turno de cada jugador dentro de 3 casillas
 function applyAsadorAura(unit) {
   if (unit.controller !== "human") return;
-  const asadors = state.units.filter((u) => u.isAlive && u.templateId === "zombie_asador");
-  if (asadors.some((asador) => manhattan(asador.pos, unit.pos) <= 3)) {
+  const asadores = state.units.filter((u) => u.isAlive && u.templateId === "zombie_asador");
+  const inRange = asadores.some((a) => manhattan(a.pos, unit.pos) <= 3);
+  if (inRange) {
     pushLog(`${unit.name} siente olor a asado...`, "warn");
     addGula(unit, 5);
   }
 }
 
+// Recalcula los auras de Velocidad/Precision de la Barre Vereda para todo el tablero.
+// Se llama una vez por turno para reflejar posiciones actuales (no se acumula si te movés adentro/afuera).
 function recomputeAuras() {
-  state.units.forEach((unit) => {
-    unit.statuses.auraSpeed = 0;
-    unit.statuses.auraAccuracy = 0;
+  state.units.forEach((u) => {
+    u.statuses.auraSpeed = 0;
+    u.statuses.auraAccuracy = 0;
   });
-
   state.units
-    .filter((unit) => unit.isAlive && unit.passives.includes("chusmerio_aura"))
+    .filter((u) => u.isAlive && u.passives.includes("chusmerio_aura"))
     .forEach((barre) => {
-      aliveUnits(barre.team).forEach((unit) => {
-        if (unit.uid !== barre.uid && manhattan(unit.pos, barre.pos) <= 3) {
-          unit.statuses.auraSpeed += 1;
-          unit.statuses.auraAccuracy += 1;
+      aliveUnits(barre.team).forEach((u) => {
+        if (u.uid !== barre.uid && manhattan(u.pos, barre.pos) <= 3) {
+          u.statuses.auraSpeed += 1;
+          u.statuses.auraAccuracy += 1;
         }
       });
     });
@@ -727,7 +789,7 @@ function processStatusTick(unit) {
     unit.statuses.buffTurns -= 1;
     if (unit.statuses.buffTurns === 0) {
       unit.statuses.buff = { defensePct: 0, accuracyPct: 0, extraMove: 0, strFlat: 0 };
-      pushLog(`${unit.name} pierde los buffs de Ivan.`, "warn");
+      pushLog(`${unit.name} pierde sus buffs temporales.`, "warn");
     }
   }
 
@@ -774,6 +836,90 @@ function checkBattleEnd() {
   }
 
   return false;
+}
+
+// Crea un zombie de refuerzo del lado derecho del tablero (oleadas de dificultad)
+function spawnWaveUnit(template) {
+  if (!template) return null;
+  const candidates = [];
+  for (let x = GRID_COLS - 1; x >= GRID_COLS - 3 && !candidates.length; x -= 1) {
+    for (let y = 0; y < GRID_ROWS; y += 1) {
+      const cell = { x, y };
+      if (isWalkable(cell, null)) candidates.push(cell);
+    }
+  }
+  if (!candidates.length) return null;
+  const cell = candidates[Math.floor(Math.random() * candidates.length)];
+
+  const unit = {
+    uid: `B_${template.id}_wave_${Math.floor(Math.random() * 99999)}`,
+    team: "B",
+    templateId: template.id,
+    templateGroup: "enemy",
+    controller: "ai",
+    ai: template.ai || null,
+    name: template.name,
+    role: template.role,
+    stats: deepClone(template.stats),
+    currentHp: template.stats.hp,
+    pos: cell,
+    isAlive: true,
+    passives: [...template.passives],
+    abilities: deepClone(template.abilities),
+    gula: null,
+    charge: { special: 0, ultimate: 0 },
+    statuses: {
+      skipTurn: 0,
+      stunned: 0,
+      tauntedBy: null,
+      tauntTurns: 0,
+      movePenalty: 0,
+      infectionTurns: 0,
+      infectionDamage: 0,
+      buffTurns: 0,
+      auraSpeed: 0,
+      auraAccuracy: 0,
+      buff: { defensePct: 0, accuracyPct: 0, extraMove: 0, strFlat: 0 }
+    }
+  };
+  state.units.push(unit);
+  return unit;
+}
+
+// Los refuerzos se suman a state.units pero NO se agregan al turnOrder de esta ronda
+// (se incorporan solos en la proxima llamada a recalculateTurnOrder, igual que hace
+// el Zombie Arana al invocar aranas) para evitar desincronizar el turno en curso.
+function spawnWave(count) {
+  if (count <= 0) return;
+  const names = [];
+  for (let i = 0; i < count; i += 1) {
+    const tpl = enemyTemplates[Math.floor(Math.random() * enemyTemplates.length)];
+    const unit = spawnWaveUnit(tpl);
+    if (unit) names.push(unit.name);
+  }
+  if (names.length) {
+    pushLog(`Oleada de refuerzos: aparecen ${names.join(", ")}.`, "bad");
+  }
+}
+
+function maybeSpawnWave() {
+  const cfg = WAVE_CONFIG[state.difficulty] || WAVE_CONFIG.normal;
+
+  if (state.round === WAVE_ROUNDS.wave2 && !state.wavesSpawned.wave2) {
+    state.wavesSpawned.wave2 = true;
+    if (cfg.wave2 > 0) {
+      pushLog("Se escuchan mas zombies acercandose por la cuadra...", "warn");
+      spawnWave(cfg.wave2);
+    }
+  }
+
+  if (state.round === WAVE_ROUNDS.wave3 && !state.wavesSpawned.wave3) {
+    state.wavesSpawned.wave3 = true;
+    if (cfg.wave3 > 0) {
+      pushLog("Ultima oleada: el barrio entero parece estar viniendo.", "warn");
+      spawnWave(cfg.wave3);
+    }
+  }
 }
 
 function beginTurn() {
@@ -879,22 +1025,36 @@ function renderActions() {
     return;
   }
 
+  /*
+   * FIX #1: antes playerMoveBtn.disabled = true; se ejecutaba SIEMPRE,
+   * sin importar el valor de canMove. El movimiento seguia funcionando
+   * porque se dispara clickeando las celdas del grid directamente, pero
+   * el boton "Mover" quedaba muerto y confundia (parecia roto).
+   * Ahora el boton refleja el estado real y, al clickearlo, activa el
+   * modo de previsualizacion de movimiento sobre el grid (igual que el hover).
+   */
   const canMove = !state.movedThisTurn;
   playerMoveBtn.classList.toggle("on", canMove);
   playerMoveBtn.disabled = !canMove || active.controller !== "human";
 
   if (active.controller === "human") {
     playerBasicBtn.textContent = `Basico: ${active.abilities.basic.name}`;
-    playerSpecialBtn.textContent = `Especial: ${active.abilities.special.name} (${active.charge.special}/${active.abilities.special.chargeNeeded})${gulaBlocksSpecial(active) ? " - hambre" : ""}`;
-    playerUltBtn.textContent = `Habilidad: ${active.abilities.ultimate.name} (${active.charge.ultimate}/${active.abilities.ultimate.chargeNeeded})${gulaBlocksUltimate(active) ? " - hambre" : ""}`;
+    playerSpecialBtn.textContent = `Especial: ${active.abilities.special.name} (${active.charge.special}/${active.abilities.special.chargeNeeded})${gulaBlocksSpecial(active) ? " — hambre" : ""}`;
+    playerUltBtn.textContent = `Habilidad: ${active.abilities.ultimate.name} (${active.charge.ultimate}/${active.abilities.ultimate.chargeNeeded})${gulaBlocksUltimate(active) ? " — hambre" : ""}`;
 
     playerBasicBtn.classList.add("on");
     playerSpecialBtn.classList.toggle("on", active.charge.special >= active.abilities.special.chargeNeeded);
     playerUltBtn.classList.toggle("on", active.charge.ultimate >= active.abilities.ultimate.chargeNeeded);
 
     playerBasicBtn.disabled = state.actionUsed;
-    playerSpecialBtn.disabled = state.actionUsed || active.charge.special < active.abilities.special.chargeNeeded || gulaBlocksSpecial(active);
-    playerUltBtn.disabled = state.actionUsed || active.charge.ultimate < active.abilities.ultimate.chargeNeeded || gulaBlocksUltimate(active);
+    playerSpecialBtn.disabled =
+      state.actionUsed ||
+      active.charge.special < active.abilities.special.chargeNeeded ||
+      gulaBlocksSpecial(active);
+    playerUltBtn.disabled =
+      state.actionUsed ||
+      active.charge.ultimate < active.abilities.ultimate.chargeNeeded ||
+      gulaBlocksUltimate(active);
 
     playerMoveBtn.addEventListener("click", () => setPreview("move", null));
     playerBasicBtn.addEventListener("click", () => useAbility("basic"));
@@ -942,6 +1102,12 @@ function applyInfection(target, turns, damagePerTurn) {
   pushLog(`${target.name} queda infectado (${damagePerTurn} HP por ${turns} turnos).`, "bad");
 }
 
+/*
+ * FIX #2: la explosion del Zombie Blandito no filtraba por equipo, asi que
+ * podia contagiar a otros zombies/aranas ademas de al equipo del jugador
+ * (fuego amigo no intencional). Ahora solo afecta al equipo contrario al
+ * del Blandito, es decir, a los personajes del jugador.
+ */
 function handleOnDeath(unit) {
   if (!unit.passives.includes("explosion_descomposicion")) return;
   const nearby = state.units.filter(
@@ -956,9 +1122,19 @@ function handleOnDeath(unit) {
 function applyDamage(attacker, defender, ability) {
   if (!attacker || !defender || !defender.isAlive) return;
 
-  const hitChance = ability.forceHit
-    ? 1
-    : Math.min(0.95, ((attacker.stats.accuracy + attacker.statuses.auraAccuracy) * (1 + attacker.statuses.buff.accuracyPct)) / 10);
+  const accWithAura = attacker.stats.accuracy + (attacker.statuses.auraAccuracy || 0);
+  /*
+   * Formula de acierto recalibrada. Antes era lineal: Precision/10, lo que
+   * hacia que Precision 5 (Lulo) fuera exactamente 50% de fallar, y Precision
+   * 4 (Yenien) casi 60%. Eso se sentia como una moneda al aire en cada golpe.
+   * Ahora hay un piso de 50% base + 5% por punto de Precision, con techo en
+   * 97% (nunca 100% garantizado salvo forceHit). Ejemplo: Precision 5 -> 75%,
+   * Precision 9 -> 95%. Tambien sube el acierto base de los zombies comunes
+   * (la mayoria tiene Precision 5-7), lo cual ayuda a que se sientan mas
+   * amenazantes, en linea con el resto del rebalance ya aplicado.
+   */
+  const effectiveAcc = accWithAura * (1 + attacker.statuses.buff.accuracyPct);
+  const hitChance = ability.forceHit ? 1 : Math.min(0.97, 0.5 + effectiveAcc * 0.05);
 
   if (Math.random() > hitChance) {
     pushLog(`${attacker.name} falla ${ability.name} sobre ${defender.name}.`, "warn");
@@ -968,9 +1144,19 @@ function applyDamage(attacker, defender, ability) {
   const critChance = ability.guaranteedCrit ? 1 : Math.min(0.8, 0.1 + (ability.critBonus || 0) / 100);
   const isCrit = Math.random() < critChance;
 
-  const base = (attacker.stats.strength + (attacker.statuses.buff.strFlat || 0)) * 6 + (ability.power || 0);
+  const strWithBuff = attacker.stats.strength + (attacker.statuses.buff.strFlat || 0);
+  const base = strWithBuff * 6 + (ability.power || 0);
+  /*
+   * Rebalance: antes el multiplicador de Defensa era 3 para todos, lo que
+   * hacia que los personajes jugables (con power de habilidad alto) mataran
+   * zombies comunes en 1-2 golpes, mientras los zombies necesitaban 8-9
+   * golpes para matar a un jugador. Ahora la Defensa pesa distinto segun
+   * quien ataca: los jugadores siguen sintiendose poderosos contra zombies
+   * comunes, pero los zombies golpean con mas convincion a los jugadores.
+   */
+  const defMultiplier = attacker.controller === "human" ? 4 : 2.5;
   const defValue = defender.stats.defense * (1 + defender.statuses.buff.defensePct);
-  const reduced = Math.max(4, base - defValue * 3 + (Math.random() * 8 - 4));
+  const reduced = Math.max(4, base - defValue * defMultiplier + (Math.random() * 8 - 4));
   const dmg = Math.round(isCrit ? reduced * 1.5 : reduced);
 
   defender.currentHp = Math.max(0, defender.currentHp - dmg);
@@ -1139,29 +1325,30 @@ function resolveAbility(actor, target, ability) {
       return true;
     case "gula_reduce_all":
       aliveUnits(actor.team).forEach((ally) => reduceGula(ally, ability.gulaReduce));
-      pushLog(`${actor.name} reparte criollitos. El grupo reduce su Gula.`, "ok");
+      pushLog(`${actor.name} reparte criollitos. El grupo reduce su Gula (no cura HP).`, "ok");
       return true;
-    case "delivery_dash":
+    case "delivery_dash": {
       moveTowards(actor, target, ability.dashCells || 0);
       if (!canHitTarget(actor, target, { ...ability, range: 1 })) return false;
       applyDamage(actor, target, ability);
       return true;
+    }
     case "greasy_throw":
       if (!canHitTarget(actor, target, ability)) return false;
       applyDamage(actor, target, ability);
       if (target.isAlive) {
         target.statuses.movePenalty = Math.max(target.statuses.movePenalty, ability.duration || 1);
-        pushLog(`${target.name} queda grasoso y se mueve menos.`, "warn");
+        pushLog(`${target.name} queda grasoso y se mueve menos el proximo turno.`, "warn");
       }
       return true;
     case "buff_str_radius": {
-      const affected = aliveUnits(actor.team).filter((unit) => manhattan(unit.pos, actor.pos) <= ability.range);
+      const affected = aliveUnits(actor.team).filter((u) => manhattan(u.pos, actor.pos) <= ability.range);
       if (!affected.length) return false;
-      affected.forEach((unit) => {
-        unit.statuses.buffTurns = Math.max(unit.statuses.buffTurns, ability.duration);
-        unit.statuses.buff.strFlat = (unit.statuses.buff.strFlat || 0) + ability.strBonus;
+      affected.forEach((u) => {
+        u.statuses.buffTurns = Math.max(u.statuses.buffTurns, ability.duration);
+        u.statuses.buff.strFlat = (u.statuses.buff.strFlat || 0) + ability.strBonus;
       });
-      pushLog(`${actor.name} mejora la fuerza de los zombies cercanos.`, "bad");
+      pushLog(`${actor.name} grita "¡Yo vi todo!" — los zombies cercanos se enfurecen (+${ability.strBonus} Fuerza).`, "bad");
       return true;
     }
     case "push_damage":
@@ -1170,30 +1357,37 @@ function resolveAbility(actor, target, ability) {
       if (target.isAlive) pushTargetFromAttacker(actor, target, ability.pushCells || 1);
       return true;
     case "sweep_adjacent": {
-      const impacted = aliveUnits(enemyTeam(actor.team)).filter((unit) => manhattan(unit.pos, actor.pos) <= 1);
+      const impacted = aliveUnits(enemyTeam(actor.team)).filter((u) => manhattan(u.pos, actor.pos) <= 1);
       if (!impacted.length) return false;
-      impacted.forEach((unit) => {
-        applyDamage(actor, unit, ability);
-        if (unit.isAlive) unit.statuses.movePenalty = Math.max(unit.statuses.movePenalty, ability.duration || 1);
+      impacted.forEach((u) => {
+        applyDamage(actor, u, ability);
+        if (u.isAlive) u.statuses.movePenalty = Math.max(u.statuses.movePenalty, ability.duration || 1);
       });
+      pushLog(`${actor.name} hace una barrida violenta. ¡FALTA!`, "bad");
       return true;
     }
     case "summon_spiders": {
-      const currentSpiders = state.units.filter((unit) => unit.isAlive && unit.templateId === "arana_comun").length;
+      const currentSpiders = state.units.filter((u) => u.isAlive && u.templateId === "arana_comun").length;
       const room = Math.max(0, (ability.maxSpiders || 4) - currentSpiders);
+      const toSpawn = Math.min(ability.summonCount || 2, room);
+      if (toSpawn <= 0) {
+        pushLog(`${actor.name} intenta invocar aranas pero ya no hay lugar en el campo.`, "warn");
+        return true;
+      }
       const spiderTpl = findTemplate("arana_comun", "enemy");
       let spawned = 0;
-      for (let index = 0; index < Math.min(ability.summonCount || 2, room); index += 1) {
+      for (let i = 0; i < toSpawn; i += 1) {
         if (spawnUnitNear(spiderTpl, actor)) spawned += 1;
       }
-      pushLog(`${actor.name} invoca ${spawned} arana(s).`, "bad");
+      pushLog(`${actor.name} grita "¡SALGAN!" y aparecen ${spawned} arana(s).`, "bad");
       return true;
     }
     case "aoe_burn": {
       if (!canHitTarget(actor, target, ability)) return false;
-      const impacted = aliveUnits(enemyTeam(actor.team)).filter((unit) => manhattan(unit.pos, target.pos) <= 1);
+      const impacted = aliveUnits(enemyTeam(actor.team)).filter((u) => manhattan(u.pos, target.pos) <= 1);
       if (!impacted.length) return false;
       impacted.forEach((unit) => applyDamage(actor, unit, ability));
+      pushLog(`${actor.name} sacude la parrilla. Brasas por todos lados.`, "bad");
       return true;
     }
     case "delegate": {
@@ -1227,7 +1421,7 @@ function resolveAbility(actor, target, ability) {
     case "team_buff":
       aliveUnits(actor.team).forEach((ally) => {
         ally.statuses.buffTurns = ability.duration;
-        ally.statuses.buff = { defensePct: 0.1, accuracyPct: 0.1, extraMove: 1, strFlat: 0 };
+        ally.statuses.buff = { defensePct: 0.1, accuracyPct: 0.1, extraMove: 1 };
       });
       pushLog(`${actor.name} ordena al equipo: +defensa, +precision y +movimiento.`, "ok");
       return true;
@@ -1268,14 +1462,14 @@ function resolveAbility(actor, target, ability) {
       return true;
     }
     case "charge_strike": {
-      moveTowards(actor, target, 2);
+      moveTowards(actor, target, ability.dashCells || 1);
       if (!canHitTarget(actor, target, { ...ability, range: 1 })) return false;
       pushLog(`${actor.name} embiste violentamente.`, "warn");
       applyDamage(actor, target, ability);
       return true;
     }
     case "dash_strike": {
-      moveStraightToward(actor, target, 5);
+      moveStraightToward(actor, target, ability.dashCells || 2);
       if (!canHitTarget(actor, target, { ...ability, range: 1 })) return false;
       pushLog(`${actor.name} corre sin control.`, "warn");
       applyDamage(actor, target, ability);
@@ -1335,9 +1529,9 @@ function useAbility(abilityKey, forcedTargetId = null) {
   state.actionUsed = true;
 
   if (actor.controller === "human") {
-    const actionGula = abilityKey === "special" ? 5 : abilityKey === "ultimate" ? 10 : 0;
-    const smokingGula = ability.smoking ? (ability.smokingGula || 10) : 0;
-    addGula(actor, actionGula + smokingGula);
+    const tierGula = abilityKey === "special" ? 5 : abilityKey === "ultimate" ? 10 : 0;
+    const smokingBonus = ability.smoking ? (ability.smokingGula || 10) : 0;
+    if (tierGula + smokingBonus > 0) addGula(actor, tierGula + smokingBonus);
   }
 
   if (ability.voice && Math.random() < 0.5) {
@@ -1371,6 +1565,14 @@ function chooseAiTarget(actor) {
     .sort((a, b) => a.d - b.d)[0].unit;
 }
 
+/*
+ * FIX #3: cuando ability.target era "ally" (singular, ej: la ultimate de
+ * Zurdo "Esta a la moda"), esta funcion caia en la rama generica y llamaba
+ * a chooseAiTarget(), que devuelve un ENEMIGO. Si algun personaje de IA
+ * tuviera una habilidad de curacion a un aliado (target: "ally"), le habria
+ * apuntado mal. Se agrega el caso explicito: busca un aliado vivo (el mas
+ * herido si hay varios) y si no hay otro, se apunta a si mismo.
+ */
 function pickAiTargetForAbility(actor, ability) {
   if (ability.target === "self") return actor.uid;
   if (["allies", "enemies", "none"].includes(ability.target)) return "";
@@ -1507,7 +1709,8 @@ function renderGrid() {
         const unitEl = document.createElement("div");
         unitEl.className = `unit team${occupant.team}`;
         const icon = ICONS[occupant.templateId] || "🎮";
-        unitEl.textContent = `${icon} ${occupant.name}\n${occupant.currentHp} HP`;
+        const gulaTxt = occupant.controller === "human" ? ` | Gula ${occupant.gula}` : "";
+        unitEl.textContent = `${icon} ${occupant.name}\n${occupant.currentHp} HP${gulaTxt}`;
         unitEl.addEventListener("click", (ev) => {
           ev.stopPropagation();
           state.selectedUnitId = occupant.uid;
@@ -1553,6 +1756,9 @@ function renderDetails() {
 
   const move = effectiveMovementCells(unit);
   const side = unit.controller === "human" ? "Jugador" : "IA";
+  const gulaLine = unit.controller === "human"
+    ? `Gula: ${unit.gula}/100 (${gulaStateOf(unit.gula)})<br>`
+    : "";
 
   els.unitDetails.innerHTML = `
     <strong>${unit.name}</strong> (${unit.role})<br>
@@ -1560,104 +1766,35 @@ function renderDetails() {
     HP: ${unit.currentHp}/${unit.stats.hp}<br>
     STR ${unit.stats.strength} | DEF ${unit.stats.defense} | ACC ${unit.stats.accuracy} | SPD ${unit.stats.speed}<br>
     Movimiento actual: ${move} casillas<br>
+    ${gulaLine}
     Carga especial: ${unit.charge.special}/${unit.abilities.special.chargeNeeded}<br>
     Carga habilidad: ${unit.charge.ultimate}/${unit.abilities.ultimate.chargeNeeded}<br>
-    Gula: ${unit.gula ?? 0}<br>
     Estados: ${formatStatuses(unit)}
   `;
 }
 
-function gulaStateOf(value) {
-  const safeValue = Number(value) || 0;
-  if (safeValue >= 100) return "maxima";
-  if (safeValue >= 80) return "mucha";
-  if (safeValue >= 50) return "hambre";
-  return "normal";
-}
+function renderWaveInfo() {
+  if (!els.waveValue) return;
+  const cfg = WAVE_CONFIG[state.difficulty] || WAVE_CONFIG.normal;
 
-function gulaMovePenalty(unit) {
-  if (unit.controller !== "human") return 0;
-  if (unit.gula >= 80) return 2;
-  if (unit.gula >= 50) return 1;
-  return 0;
-}
-
-function gulaBlocksSpecial(unit) {
-  return unit.controller === "human" && unit.gula >= 80;
-}
-
-function gulaBlocksUltimate(unit) {
-  return unit.controller === "human" && unit.gula >= 100;
-}
-
-function checkGulaThresholdCross(unit, before) {
-  const previous = gulaStateOf(before);
-  const current = gulaStateOf(unit.gula);
-  if (previous === current) return;
-  const messages = {
-    hambre: `${unit.name} empieza a sentir hambre (Gula ${unit.gula}).`,
-    mucha: `${unit.name} tiene mucha hambre. Especial bloqueado.`,
-    maxima: `${unit.name} llego a Gula maxima. Especial y habilidad bloqueados.`,
-    normal: `${unit.name} vuelve a un nivel de Gula normal.`
-  };
-  pushLog(messages[current], current === "normal" ? "ok" : "bad");
-}
-
-function addGula(unit, amount) {
-  if (!unit || unit.controller !== "human" || amount === 0) return;
-  const before = unit.gula;
-  unit.gula = Math.min(100, Math.max(0, unit.gula + amount));
-  checkGulaThresholdCross(unit, before);
-}
-
-function reduceGula(unit, amount) {
-  addGula(unit, -Math.abs(amount));
-}
-
-function renderGulaList() {
-  const players = state.units.filter((u) => u.controller === "human");
-  if (!players.length) {
-    els.gulaList.innerHTML = "<small>Selecciona jugadores e inicia el combate.</small>";
+  if (cfg.wave2 === 0 && cfg.wave3 === 0) {
+    els.waveValue.textContent = "Unica (facil)";
     return;
   }
-
-  els.gulaList.innerHTML = players
-    .map((u) => {
-      const st = gulaStateOf(u.gula);
-      return `
-        <div class="gula-row state-${st}">
-          <span>${u.name}</span>
-          <span class="gula-bar-wrap"><span class="gula-bar-fill"></span></span>
-          <span>${u.gula}</span>
-        </div>
-      `;
-    })
-    .join("");
-
-  els.gulaList.querySelectorAll(".gula-row").forEach((row, index) => {
-    const unit = players[index];
-    if (!unit) return;
-    const fill = row.querySelector(".gula-bar-fill");
-    if (fill) {
-      fill.style.setProperty("--gula-width", `${Math.max(0, Math.min(100, Number(unit.gula || 0)))}%`);
-    }
-  });
+  if (state.wavesSpawned.wave3) {
+    els.waveValue.textContent = "3/3 (ultima ya llego)";
+  } else if (state.wavesSpawned.wave2) {
+    els.waveValue.textContent = `2/3 — proxima en ronda ${WAVE_ROUNDS.wave3} (+${cfg.wave3})`;
+  } else {
+    els.waveValue.textContent = `1/3 — proxima en ronda ${WAVE_ROUNDS.wave2} (+${cfg.wave2})`;
+  }
 }
 
 function renderHeader() {
   els.roundValue.textContent = String(state.round);
   els.turnValue.textContent = state.turnOrder.length ? `${state.turnIndex + 1}/${state.turnOrder.length}` : "-";
   els.spiderValue.textContent = isSpiderAlive() ? "Si" : "No";
-  const config = WAVE_CONFIG[state.difficulty] || WAVE_CONFIG.normal;
-  if (!config.wave2 && !config.wave3) {
-    els.waveValue.textContent = "Unica (facil)";
-  } else if (state.wavesSpawned.wave3) {
-    els.waveValue.textContent = "3/3 (ultima ya llego)";
-  } else if (state.wavesSpawned.wave2) {
-    els.waveValue.textContent = `2/3 - proxima en ronda ${WAVE_ROUNDS.wave3} (+${config.wave3})`;
-  } else {
-    els.waveValue.textContent = `1/3 - proxima en ronda ${WAVE_ROUNDS.wave2} (+${config.wave2})`;
-  }
+  renderWaveInfo();
 
   const active = getUnit(state.activeUnitId);
   if (!active || !state.battleStarted) {
@@ -1674,6 +1811,26 @@ function pushLog(text, type = "ok") {
   line.className = "entry";
   line.innerHTML = `<span class="badge ${type}">${type.toUpperCase()}</span> ${text}`;
   els.log.prepend(line);
+}
+
+function renderGulaList() {
+  const players = state.units.filter((u) => u.controller === "human");
+  if (!players.length) {
+    els.gulaList.innerHTML = "<small>Selecciona jugadores e inicia el combate.</small>";
+    return;
+  }
+  els.gulaList.innerHTML = players
+    .map((u) => {
+      const st = gulaStateOf(u.gula);
+      return `
+        <div class="gula-row state-${st}">
+          <span>${u.name}</span>
+          <span class="gula-bar-wrap"><span class="gula-bar-fill" style="width:${u.gula}%"></span></span>
+          <span>${u.gula}</span>
+        </div>
+      `;
+    })
+    .join("");
 }
 
 function renderAll() {
@@ -1700,6 +1857,13 @@ function wireEvents() {
     renderAll();
   });
 
+  els.endTurnBtn.addEventListener("click", () => {
+    const active = getUnit(state.activeUnitId);
+    if (!state.battleStarted || !active || active.controller !== "human") return;
+    endTurn();
+    renderAll();
+  });
+
   els.houseResetBtn.addEventListener("click", () => {
     state.units.filter((u) => u.controller === "human").forEach((u) => { u.gula = 0; });
     pushLog("El grupo vuelve a la casa de Nico. La Gula se resetea para todos.", "ok");
@@ -1717,13 +1881,6 @@ function wireEvents() {
     pushLog(`${active.name} come (${els.foodSelect.options[els.foodSelect.selectedIndex].text}).`, "ok");
     renderAll();
   });
-
-  els.endTurnBtn.addEventListener("click", () => {
-    const active = getUnit(state.activeUnitId);
-    if (!state.battleStarted || !active || active.controller !== "human") return;
-    endTurn();
-    renderAll();
-  });
 }
 
 setupSelectors();
@@ -1731,3 +1888,34 @@ wireEvents();
 randomTeams();
 renderPlayerStrip();
 renderAll();
+
+/*
+ * Helpers de consola para probar el sistema de Gula mientras no tengamos
+ * botones reales en el HTML (no tengo visibilidad del archivo de la pagina
+ * para cablearlos sin arriesgarme a referenciar elementos que no existen).
+ * Uso desde la consola del navegador durante un combate:
+ *   nico420Debug.listPlayers()              -> ver uid de cada jugador
+ *   nico420Debug.eat("A_santi_0_1234", 40)   -> comer (reduce Gula)
+ *   nico420Debug.resetGulaAtHouse()          -> simula volver a la casa de Nico
+ */
+window.nico420Debug = {
+  listPlayers() {
+    return state.units
+      .filter((u) => u.controller === "human")
+      .map((u) => `${u.uid} — ${u.name} (Gula ${u.gula})`);
+  },
+  eat(uid, amount) {
+    const u = getUnit(uid);
+    if (!u || u.controller !== "human") return "Unidad no encontrada o no es jugador.";
+    reduceGula(u, amount);
+    pushLog(`${u.name} come y reduce su Gula en ${amount}.`, "ok");
+    renderAll();
+    return `${u.name}: Gula ahora en ${u.gula}.`;
+  },
+  resetGulaAtHouse() {
+    state.units.filter((u) => u.controller === "human").forEach((u) => { u.gula = 0; });
+    pushLog("El grupo vuelve a la casa de Nico. La Gula se resetea para todos.", "ok");
+    renderAll();
+    return "Gula reseteada para todo el grupo.";
+  }
+};
