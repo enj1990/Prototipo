@@ -129,6 +129,8 @@ body {
   grid-template-columns: 150px 150px auto;
   gap: 0.7rem;
   align-items: end;
+  width: 100%;
+  min-width: 0;
 }
 
 .pickers-row {
@@ -140,6 +142,7 @@ body {
 
 .pickers-row > * {
   min-width: 0;
+  max-width: 100%;
 }
 
 .picker-box,
@@ -214,12 +217,16 @@ body {
   display: grid;
   grid-template-rows: auto 1fr;
   gap: 0.38rem;
+  min-width: 0;
+  max-width: 100%;
+  overflow: hidden;
 }
 
 .setup-inline,
 .setup-buttons,
 .player-strip-wrap {
   min-width: 0;
+  max-width: 100%;
 }
 
 .setup-speed select {
@@ -255,12 +262,15 @@ select {
   display: flex;
   gap: 0.4rem;
   align-items: stretch;
+  width: 100%;
+  min-width: 0;
 }
 
 .setup-buttons button {
   width: auto;
   flex: 1 1 0;
   min-width: 0;
+  max-width: 100%;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -349,6 +359,7 @@ button:disabled {
   max-height: 56px;
   min-width: 0;
   max-width: 100%;
+  width: 100%;
   padding: 0.05rem 0.05rem 0.2rem;
 }
 
@@ -358,6 +369,7 @@ button:disabled {
   background: var(--surface-2);
   padding: 0.3rem 0.42rem;
   min-width: 120px;
+  width: 120px;
   flex: 0 0 120px;
   display: grid;
   grid-template-columns: 20px 1fr;
@@ -747,4 +759,109 @@ h3::before {
   border-color: rgba(255, 107, 61, 0.6);
   color: var(--ember-deep);
   font-weight: 700;
+}
+
+/* Botones de ayuda de habilidad y modal de descripcion */
+.ability-row {
+  display: flex;
+  align-items: stretch;
+  gap: 0.32rem;
+}
+
+.ability-row .action-btn {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.help-btn {
+  flex: none;
+  width: 28px;
+  height: auto;
+  min-height: 100%;
+  padding: 0;
+  border-radius: 50%;
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+  color: var(--muted);
+  font-family: "Space Mono", monospace;
+  font-weight: 700;
+  font-size: 0.72rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+.help-btn:hover:not(:disabled) {
+  border-color: var(--gold);
+  color: var(--gold-bright);
+  background: rgba(233, 184, 33, 0.14);
+  transform: none;
+}
+
+.help-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  background: rgba(5, 4, 3, 0.72);
+  backdrop-filter: blur(3px);
+}
+
+.help-overlay.hidden {
+  display: none;
+}
+
+.help-modal {
+  position: relative;
+  max-width: 380px;
+  width: 100%;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 1.1rem 1.2rem 1.2rem;
+  box-shadow: 0 25px 70px rgba(0, 0, 0, 0.55);
+}
+
+.help-modal-close {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  width: 26px;
+  height: 26px;
+  padding: 0;
+  border-radius: 50%;
+  background: var(--surface-2);
+  color: var(--muted);
+  font-size: 0.7rem;
+}
+
+.help-modal-eyebrow {
+  margin: 0 0 0.15rem;
+  font-family: "Space Mono", monospace;
+  font-size: 0.62rem;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--muted);
+}
+
+.help-modal-title {
+  margin: 0 0 0.55rem;
+  font-family: "Unbounded", sans-serif;
+  font-weight: 800;
+  font-size: 1.05rem;
+  color: var(--ember-deep);
+}
+
+.help-modal-body {
+  margin: 0;
+  font-family: "Inter", sans-serif;
+  font-size: 0.85rem;
+  line-height: 1.55;
+  color: var(--bone);
+  white-space: pre-line;
 }

@@ -143,6 +143,54 @@ const characterTemplates = [
   }
 ];
 
+const ABILITY_LORE = {
+  negro: {
+    basic: (a) => `Le pega con la correa del perro. Ni el perro entiende por que la usa como arma. Daño: ${a.power}. Sin carga, se puede usar todos los turnos.`,
+    special: (a) => `Se le hincha la vena del cuello y pega con toda su fuerza de gimnasio. Daño: ${a.power}, con ${a.critBonus}% de chance extra de critico. Carga: ${a.chargeNeeded} turnos.`,
+    ultimate: (a) => `Silba y aparece su perro a ayudar. Pega ${a.power} de daño a hasta ${a.maxTargets} enemigos distintos. Carga: ${a.chargeNeeded} turnos (el perro tampoco viene gratis).`
+  },
+  nico: {
+    basic: (a) => `Tira un fibron a distancia, como si estuviera corrigiendo un examen. Daño: ${a.power}. Sin carga.`,
+    special: (a) => `Plantea un acertijo matematico imposible de resolver en medio de un apocalipsis zombie. ${Math.round(a.stunChance * 100)}% de chance de que el enemigo se quede pensando y pierda el turno. Ojo: ${Math.round(a.allyConfuseChance * 100)}% de chance de que tambien confunda a un compañero (el acertijo es malo para todos). No hace daño directo. Carga: ${a.chargeNeeded} turnos.`,
+    ultimate: (a) => `Se cansa de explicar y ataca en serio. Pega ${a.power} de daño a hasta ${a.maxTargets} enemigos. Carga: ${a.chargeNeeded} turnos.`
+  },
+  juan: {
+    basic: (a) => `Le tira las llaves del auto al enemigo. Es lo primero que encuentra en el bolsillo. Daño: ${a.power}. Sin carga.`,
+    special: (a) => `Tira TODAS las llaves de sus departamentos a la vez. Daño: ${a.power} a TODOS los enemigos en el campo. Carga: ${a.chargeNeeded} turnos.`,
+    ultimate: (a) => `Le suena el celular. Es la vieja de siempre preguntando "¿no tendras un departamentito para mi?". Juan cuelga furioso y descarga toda la bronca en un solo golpe: ${a.power} de daño GARANTIZADO critico (no puede fallar el critico, aunque el golpe en si puede errar). Carga: ${a.chargeNeeded} turnos, la mas alta de las especiales del grupo.`
+  },
+  zurdo: {
+    basic: (a) => `Intenta una doble patada. La primera SIEMPRE falla ("no estaba bien parado"), pero la segunda conecta seguro con la mitad del daño: ${Math.round(a.power / 2)}. Sin carga.`,
+    special: (a) => `Grita "¡BROLY!" y aparece el otro perro del Negro arrasando en cono. Daño: ${a.power} a los enemigos mas cercanos (hasta 3). Carga: ${a.chargeNeeded} turnos.`,
+    ultimate: (a) => `Se saca una selfie y se la manda a un compañero para subirle el animo. Cura ${a.healPower} de HP a un aliado (no hace daño). Carga: ${a.chargeNeeded} turnos.`
+  },
+  lauti: {
+    basic: (a) => `Golpe cuerpo a cuerpo con la paleta de paddle. Daño: ${a.power}. Sin carga.`,
+    special: (a) => `Pelotazo de paddle a distancia con mala leche. Daño: ${a.power}, con ${a.critBonus}% de chance extra de critico. Carga: ${a.chargeNeeded} turnos.`,
+    ultimate: (a) => `"Ey vos, bajate de ahi." El heroe de la Gaona hace que un zombie comun abandone el combate al instante (no funciona contra tanques ni enemigos con mecanicas especiales). Carga: ${a.chargeNeeded} turnos, la mas larga de todo el juego.`
+  },
+  yenien: {
+    basic: (a) => `¿Que esperabas? Es Yenien. No hace nada. Literal. Daño: 0. Sin carga (por suerte, porque no serviria de nada cargarlo).`,
+    special: (a) => `Le delega el ataque a un compañero al azar ("atacá vos"), que pega en su lugar con su propio basico. Yenien programa, no pelea. Carga: ${a.chargeNeeded} turnos.`,
+    ultimate: (a) => `Bardea a los zombies sin parar hasta que TODOS lo atacan a el durante ${a.duration} turnos. Util para proteger al equipo, pesimo para su propia salud. No hace daño. Carga: ${a.chargeNeeded} turnos.`
+  },
+  santi: {
+    basic: (a) => `Un puñetazo simple, sobrio, de tester responsable. Daño: ${a.power}. Sin carga.`,
+    special: (a) => `Fuma la Tuca y se cura ${a.healPower} de HP. El humo hace bien al alma pero no al cuerpo: sube ${a.smokingGula} de Gula de una (mas que cualquier otra especial del grupo). Carga: ${a.chargeNeeded} turnos.`,
+    ultimate: (a) => `Compra porro y comparte el humo con todo el grupo: cura ${a.healPower} de HP a cada aliado. Tambien le sube ${a.smokingGula} de Gula a Santi. Se bloquea justo cuando Santi tiene Gula maxima, o sea, justo cuando mas hace falta curar. Carga: ${a.chargeNeeded} turnos.`
+  },
+  lulo: {
+    basic: (a) => `Un puñetazo de panadero, con manos curtidas de amasar. Daño: ${a.power}. Sin carga.`,
+    special: (a) => `Reparte criollitos recien horneados a todo el grupo. OJO: no cura HP, reduce ${a.gulaReduce} de Gula a cada aliado. Es comida de verdad, no un curita. Carga: ${a.chargeNeeded} turnos.`,
+    ultimate: (a) => `Furia de la noche: descarga ${a.power} de daño a TODOS los enemigos, pero se manda una resaca terrible despues: pierde el turno siguiente y se hace daño a si mismo. Carga: ${a.chargeNeeded} turnos.`
+  },
+  ivan: {
+    basic: (a) => `Pelotazo de educacion fisica a distancia, como en el colegio. Daño: ${a.power}. Sin carga.`,
+    special: (a) => `Lo hace saltar de mas: daño ${a.power} y ademas le cansa las piernas al enemigo, que se mueve menos el proximo turno. Carga: ${a.chargeNeeded} turnos.`,
+    ultimate: (a) => `"¡Se termino la joda!" Pone al equipo entero en modo profesor estricto durante ${a.duration} turnos: mas defensa, mas precision y mas movimiento para todos los aliados. No hace daño directo. Carga: ${a.chargeNeeded} turnos.`
+  }
+};
+
 const enemyTemplates = [
   {
     id: "zombie_vecino",
@@ -310,7 +358,12 @@ const els = {
   gulaList: document.getElementById("gulaList"),
   houseResetBtn: document.getElementById("houseResetBtn"),
   foodSelect: document.getElementById("foodSelect"),
-  eatBtn: document.getElementById("eatBtn")
+  eatBtn: document.getElementById("eatBtn"),
+  helpOverlay: document.getElementById("abilityHelpOverlay"),
+  helpModalClose: document.getElementById("helpModalClose"),
+  helpModalCharacter: document.getElementById("helpModalCharacter"),
+  helpModalTitle: document.getElementById("helpModalTitle"),
+  helpModalBody: document.getElementById("helpModalBody")
 };
 
 const WAVE_CONFIG = {
@@ -1001,6 +1054,48 @@ function actionButton(label, classes = "") {
   return btn;
 }
 
+function showAbilityHelp(characterId, abilityKey) {
+  const tpl = findTemplate(characterId, "player");
+  if (!tpl) return;
+  const ability = tpl.abilities[abilityKey];
+  if (!ability) return;
+
+  const label = abilityKey === "basic" ? "Basico" : abilityKey === "special" ? "Especial" : "Habilidad";
+  const lore = ABILITY_LORE[characterId] && ABILITY_LORE[characterId][abilityKey];
+
+  els.helpModalCharacter.textContent = `${tpl.name} — ${label}`;
+  els.helpModalTitle.textContent = ability.name;
+  els.helpModalBody.textContent = lore ? lore(ability) : "Todavia no hay descripcion cargada para esta habilidad.";
+  els.helpOverlay.classList.remove("hidden");
+}
+
+function hideAbilityHelp() {
+  els.helpOverlay.classList.add("hidden");
+}
+
+function helpButton(abilityKey) {
+  const btn = document.createElement("button");
+  btn.type = "button";
+  btn.className = "help-btn";
+  btn.textContent = "?";
+  btn.title = "Que hace esta habilidad";
+  btn.dataset.ability = abilityKey;
+  btn.disabled = true;
+  btn.addEventListener("click", (ev) => {
+    ev.stopPropagation();
+    const characterId = btn.dataset.character;
+    if (characterId) showAbilityHelp(characterId, abilityKey);
+  });
+  return btn;
+}
+
+function wrapAbilityRow(mainBtn, helpBtn) {
+  const row = document.createElement("div");
+  row.className = "ability-row";
+  row.append(mainBtn, helpBtn);
+  return row;
+}
+
 function renderActions() {
   const active = getUnit(state.activeUnitId);
   els.playerActionsContainer.innerHTML = "";
@@ -1016,7 +1111,16 @@ function renderActions() {
   const aiSpecialBtn = actionButton("Especial", state.aiPlan.step === "special" ? "picking" : "");
   const aiUltBtn = actionButton("Habilidad", state.aiPlan.step === "ultimate" ? "picking" : "");
 
-  els.playerActionsContainer.append(playerMoveBtn, playerBasicBtn, playerSpecialBtn, playerUltBtn);
+  const playerBasicHelp = helpButton("basic");
+  const playerSpecialHelp = helpButton("special");
+  const playerUltHelp = helpButton("ultimate");
+
+  els.playerActionsContainer.append(
+    playerMoveBtn,
+    wrapAbilityRow(playerBasicBtn, playerBasicHelp),
+    wrapAbilityRow(playerSpecialBtn, playerSpecialHelp),
+    wrapAbilityRow(playerUltBtn, playerUltHelp)
+  );
   els.aiActionsContainer.append(aiMoveBtn, aiBasicBtn, aiSpecialBtn, aiUltBtn);
 
   if (!active || !state.battleStarted) {
@@ -1055,6 +1159,13 @@ function renderActions() {
       state.actionUsed ||
       active.charge.ultimate < active.abilities.ultimate.chargeNeeded ||
       gulaBlocksUltimate(active);
+
+    playerBasicHelp.dataset.character = active.templateId;
+    playerSpecialHelp.dataset.character = active.templateId;
+    playerUltHelp.dataset.character = active.templateId;
+    playerBasicHelp.disabled = false;
+    playerSpecialHelp.disabled = false;
+    playerUltHelp.disabled = false;
 
     playerMoveBtn.addEventListener("click", () => setPreview("move", null));
     playerBasicBtn.addEventListener("click", () => useAbility("basic"));
@@ -1880,6 +1991,14 @@ function wireEvents() {
     reduceGula(active, amount);
     pushLog(`${active.name} come (${els.foodSelect.options[els.foodSelect.selectedIndex].text}).`, "ok");
     renderAll();
+  });
+
+  els.helpModalClose.addEventListener("click", hideAbilityHelp);
+  els.helpOverlay.addEventListener("click", (ev) => {
+    if (ev.target === els.helpOverlay) hideAbilityHelp();
+  });
+  document.addEventListener("keydown", (ev) => {
+    if (ev.key === "Escape" && !els.helpOverlay.classList.contains("hidden")) hideAbilityHelp();
   });
 }
 
